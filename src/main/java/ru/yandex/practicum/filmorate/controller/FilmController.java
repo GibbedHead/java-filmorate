@@ -46,22 +46,6 @@ public class FilmController {
         throw new ValidationException("Фильм для обновления c id = " + film.getId() + " не найден");
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(
-            MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            String rejectedValue = ((FieldError) error).getRejectedValue().toString();
-            errors.put(fieldName, errorMessage);
-            log.warn("Поле '" + fieldName
-                    + "' со значением '" + rejectedValue
-                    +  "' нарушило правило '" + errorMessage + "'");
-        });
-        return errors;
-    }
-
     public int getNewId() {
         return nextId++;
     }
