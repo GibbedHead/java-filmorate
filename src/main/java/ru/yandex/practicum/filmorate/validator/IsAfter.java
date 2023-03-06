@@ -9,7 +9,7 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = DateValidator.class)
 @Documented
 public @interface IsAfter{
-    String message() default "Date must be after {fromDate}";
+    String message() default "Дата должна быть после {fromDate}";
     String fromDate();
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};

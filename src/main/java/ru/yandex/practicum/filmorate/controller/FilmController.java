@@ -1,5 +1,8 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -12,6 +15,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/films")
+@Slf4j
 public class FilmController {
 
     private final Map<Integer, Film> films = new HashMap<>();
@@ -22,6 +26,7 @@ public class FilmController {
         int id = getNewId();
         film.setId(id);
         films.put(id, film);
+        log.info("Добавлен фильм: {}", film);
         return film;
     }
 
@@ -34,9 +39,27 @@ public class FilmController {
     public Film update(@Valid @RequestBody Film film) throws ValidationException {
         if (films.containsKey(film.getId())) {
             films.put(film.getId(), film);
+            log.info("Обновлен фильм: {}", film);
             return film;
         }
-        throw new ValidationException();
+        log.warn("Ошибка обновления фильма: {}", film);
+        throw new ValidationException("Фильм для обновления c id = " + film.getId() + " не найден");
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(
+            MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            String rejectedValue = ((FieldError) error).getRejectedValue().toString();
+            errors.put(fieldName, errorMessage);
+            log.warn("Поле '" + fieldName
+                    + "' со значением '" + rejectedValue
+                    +  "' нарушило правило '" + errorMessage + "'");
+        });
+        return errors;
     }
 
     public int getNewId() {
