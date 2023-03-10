@@ -1,49 +1,38 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.dao.UserRepository;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.Valid;
-import java.util.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
 @Slf4j
 public class UserController {
 
-    private final Map<Integer, User> users = new HashMap<>();
-    private int nextId = 1;
+    private final UserRepository users = new UserRepository();
 
     @PostMapping
     public User add(@Valid @RequestBody User user) {
-        int id = getNewId();
-        user.setId(id);
-        users.put(id, user);
+        users.save(user);
         log.info("Добавлен пользователь: {}", user);
         return user;
     }
 
     @GetMapping
     public List<User> list() {
-        return new ArrayList<>(users.values());
+        return users.getAll();
     }
 
     @PutMapping
     public User update(@Valid @RequestBody User user) throws ValidationException {
-        if (users.containsKey(user.getId())) {
-            users.put(user.getId(), user);
-            log.info("Обновлен пользователь: {}", user);
-            return user;
-        }
-        log.warn("Ошибка обновления пользователя: {}", user);
-        throw new ValidationException("Пользователь для обновления c id = " + user.getId() + " не найден");
+        users.update(user);
+        log.info("Обновлен пользователь: {}", user);
+        return user;
     }
 
-    public int getNewId() {
-        return nextId++;
-    }
 }
