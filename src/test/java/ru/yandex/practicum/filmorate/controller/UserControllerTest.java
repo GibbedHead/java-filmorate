@@ -114,6 +114,67 @@ class UserControllerTest {
     }
 
     @Test
+    void emptyBodyUpdateShouldReturnBadRequest() throws Exception {
+        mockMvc.perform(put(url)
+                        .contentType("application/json")
+                        .content(""))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void emptyEmailUpdateShouldReturnBadRequest() throws Exception {
+        mockMvc.perform(put(url)
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(getEmptyEmailUser())))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void emptyLoginUpdateShouldReturnBadRequest() throws Exception {
+        mockMvc.perform(put(url)
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(getEmptyLoginUser())))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void spacedLoginUpdateShouldReturnBadRequest() throws Exception {
+        mockMvc.perform(put(url)
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(getSpacedLoginUser())))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void birthdayInFutureUpdateShouldReturnBadRequest() throws Exception {
+        mockMvc.perform(put(url)
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(getUnbornUser())))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void emptyNameUpdateShouldReturnLoginAsName() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(
+                        post(url)
+                                .contentType("application/json")
+                                .content(objectMapper.writeValueAsString(getUser()))
+
+                )
+                .andReturn();
+        User addedUser = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), User.class);
+        User updatedUser = getUser();
+        updatedUser.setId(addedUser.getId());
+        updatedUser.setName("");
+
+        mockMvc.perform(put(url)
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(updatedUser)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Login"));
+    }
+
+    @Test
     void invalidIdUpdateShouldReturnBadRequest() throws Exception {
         mockMvc.perform(
                 post(url)
@@ -126,7 +187,7 @@ class UserControllerTest {
         mockMvc.perform(put(url)
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(invalidIdUser)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
     private User getUser() {

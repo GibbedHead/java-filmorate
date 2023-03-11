@@ -151,7 +151,7 @@ class FilmControllerTest {
         mockMvc.perform(put(url)
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(invalidIdFilm)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
     private Film getFilm() {
