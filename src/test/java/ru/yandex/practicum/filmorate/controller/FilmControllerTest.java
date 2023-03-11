@@ -4,21 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.yandex.practicum.filmorate.FilmorateApplication;
+import org.springframework.test.web.servlet.MvcResult;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = FilmController.class)
@@ -29,13 +23,22 @@ class FilmControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
-    private FilmController filmController;
-
     private final String url = "/films";
 
     @Test
-    void emptyBodyAddShouldReturn400() throws Exception {
+    void validAddShouldReturnOkAndJsonOfFilm() throws Exception {
+        mockMvc.perform(post(url)
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(getFilm())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Name"))
+                .andExpect(jsonPath("$.description").value("Desc"))
+                .andExpect(jsonPath("$.releaseDate").value("1990-01-01"))
+                .andExpect(jsonPath("$.duration").value("90"));
+    }
+
+    @Test
+    void emptyBodyAddShouldReturnBadRequest() throws Exception {
         mockMvc.perform(post(url)
                         .contentType("application/json")
                         .content(""))
@@ -43,7 +46,7 @@ class FilmControllerTest {
     }
 
     @Test
-    void emptyNameAddShouldReturn400() throws Exception {
+    void emptyNameAddShouldReturnBadRequest() throws Exception {
         mockMvc.perform(post(url)
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(getEmptyNameFilm())))
@@ -51,7 +54,7 @@ class FilmControllerTest {
     }
 
     @Test
-    void longDescAddShouldReturn400() throws Exception {
+    void longDescAddShouldReturnBadRequest() throws Exception {
         mockMvc.perform(post(url)
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(getLongDescFilm())))
@@ -59,7 +62,7 @@ class FilmControllerTest {
     }
 
     @Test
-    void dateBefore25Dec1895AddShouldReturn400() throws Exception {
+    void dateBefore25Dec1895AddShouldReturnBadRequest() throws Exception {
         mockMvc.perform(post(url)
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(getReleseBeforeFilm())))
@@ -67,7 +70,7 @@ class FilmControllerTest {
     }
 
     @Test
-    void negativeDurationAddShouldReturn400() throws Exception {
+    void negativeDurationAddShouldReturnBadRequest() throws Exception {
         mockMvc.perform(post(url)
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(getNegativeFurationFilm())))
@@ -75,7 +78,28 @@ class FilmControllerTest {
     }
 
     @Test
-    void emptyBodyUpdateShouldReturn400() throws Exception {
+    void validUpdateShouldReturnOkAndUpdatedJsonOfUser() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(
+                        post(url)
+                                .contentType("application/json")
+                                .content(objectMapper.writeValueAsString(getFilm()))
+
+                )
+                .andReturn();
+        Film addedFilm = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Film.class);
+        Film updatedFilm = getFilm();
+        updatedFilm.setId(addedFilm.getId());
+        updatedFilm.setName("Updated");
+
+        mockMvc.perform(put(url)
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(updatedFilm)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Updated"));
+    }
+
+    @Test
+    void emptyBodyUpdateShouldReturnBadRequest() throws Exception {
         mockMvc.perform(put(url)
                         .contentType("application/json")
                         .content(""))
@@ -83,7 +107,7 @@ class FilmControllerTest {
     }
 
     @Test
-    void emptyNameUpdateShouldReturn400() throws Exception {
+    void emptyNameUpdateShouldReturnBadRequest() throws Exception {
         mockMvc.perform(put(url)
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(getEmptyNameFilm())))
@@ -91,7 +115,7 @@ class FilmControllerTest {
     }
 
     @Test
-    void longDescUpdateShouldReturn400() throws Exception {
+    void longDescUpdateShouldReturnBadRequest() throws Exception {
         mockMvc.perform(put(url)
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(getLongDescFilm())))
@@ -99,7 +123,7 @@ class FilmControllerTest {
     }
 
     @Test
-    void dateBefore25Dec1895UpdateShouldReturn400() throws Exception {
+    void dateBefore25Dec1895UpdateShouldReturnBadRequest() throws Exception {
         mockMvc.perform(put(url)
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(getReleseBeforeFilm())))
@@ -107,7 +131,7 @@ class FilmControllerTest {
     }
 
     @Test
-    void negativeDurationUpdateShouldReturn400() throws Exception {
+    void negativeDurationUpdateShouldReturnBadRequest() throws Exception {
         mockMvc.perform(put(url)
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(getNegativeFurationFilm())))
@@ -115,37 +139,19 @@ class FilmControllerTest {
     }
 
     @Test
-    void invalidIdUpdateShouldReturn400() throws Exception {
-        FilmorateApplication.main(new String[]{});
-        Film film = getFilm();
-        Film invalidIdfilm = getFilm();
-        invalidIdfilm.setId(100);
-        invalidIdfilm.setName("Updated name");
-        doPost(film);
-        HttpResponse<String> response = doPut(invalidIdfilm);
-        assertEquals(response.statusCode(), 500);
-    }
-
-    private HttpResponse<String> doPost(Film film) throws IOException, InterruptedException {
-        URI uri = URI.create("http://localhost:8080" + url);
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder().uri(uri).header("Content-type", "application/json").POST(
-                HttpRequest.BodyPublishers.ofString(
-                        objectMapper.writeValueAsString(film)
-                )
-        ).build();
-        return client.send(request, HttpResponse.BodyHandlers.ofString());
-    }
-
-    private HttpResponse<String> doPut(Film film) throws IOException, InterruptedException {
-        URI uri = URI.create("http://localhost:8080" + url);
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder().uri(uri).header("Content-type", "application/json").PUT(
-                HttpRequest.BodyPublishers.ofString(
-                        objectMapper.writeValueAsString(film)
-                )
-        ).build();
-        return client.send(request, HttpResponse.BodyHandlers.ofString());
+    void invalidIdUpdateShouldReturnBadRequest() throws Exception {
+        mockMvc.perform(
+                post(url)
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(getFilm()))
+        );
+        Film invalidIdFilm = getFilm();
+        invalidIdFilm.setId(11111);
+        invalidIdFilm.setName("Update");
+        mockMvc.perform(put(url)
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(invalidIdFilm)))
+                .andExpect(status().isBadRequest());
     }
 
     private Film getFilm() {

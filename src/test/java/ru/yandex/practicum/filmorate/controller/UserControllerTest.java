@@ -7,20 +7,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.yandex.practicum.filmorate.FilmorateApplication;
+import org.springframework.test.web.servlet.MvcResult;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
@@ -35,7 +29,19 @@ class UserControllerTest {
     private final String url = "/users";
 
     @Test
-    void emptyBodyAddShouldReturn400() throws Exception {
+    void validAddShouldReturnOkAndJsonOfUser() throws Exception {
+        mockMvc.perform(post(url)
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(getUser())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.email").value("user@mail.com"))
+                .andExpect(jsonPath("$.login").value("Login"))
+                .andExpect(jsonPath("$.birthday").value("1990-01-01"))
+                .andExpect(jsonPath("$.name").value("Name"));
+    }
+
+    @Test
+    void emptyBodyAddShouldReturnBadRequest() throws Exception {
         mockMvc.perform(post(url)
                         .contentType("application/json")
                         .content(""))
@@ -43,7 +49,7 @@ class UserControllerTest {
     }
 
     @Test
-    void emptyEmailAddShouldReturn400() throws Exception {
+    void emptyEmailAddShouldReturnBadRequest() throws Exception {
         mockMvc.perform(post(url)
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(getEmptyEmailUser())))
@@ -51,7 +57,7 @@ class UserControllerTest {
     }
 
     @Test
-    void emptyLoginAddShouldReturn400() throws Exception {
+    void emptyLoginAddShouldReturnBadRequest() throws Exception {
         mockMvc.perform(post(url)
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(getEmptyLoginUser())))
@@ -59,7 +65,7 @@ class UserControllerTest {
     }
 
     @Test
-    void spacedLoginAddShouldReturn400() throws Exception {
+    void spacedLoginAddShouldReturnBadRequest() throws Exception {
         mockMvc.perform(post(url)
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(getSpacedLoginUser())))
@@ -68,66 +74,59 @@ class UserControllerTest {
 
     @Test
     void emptyNameAddShouldReturnLoginAsName() throws Exception {
-        User user = getEmptyNameUser();
-        User userWName = getEmptyNameUser();
-        userWName.setName(userWName.getLogin());
-        userWName.setId(1);
         mockMvc.perform(
                         post(url)
                                 .contentType("application/json")
-                                .content(objectMapper.writeValueAsString(user))
+                                .content(objectMapper.writeValueAsString(getEmptyNameUser()))
                 )
-                .andExpect(content().string(objectMapper.writeValueAsString(userWName)));
+                .andExpect(jsonPath("$.name").value("Login"));
     }
 
     @Test
-    void in1validIdUpdateShouldReturn400() throws Exception {
+    void birthdayInFutureAddShouldReturnBadRequest() throws Exception {
+        mockMvc.perform(
+                        post(url)
+                                .contentType("application/json")
+                                .content(objectMapper.writeValueAsString(getUnbornUser()))
+                )
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void validUpdateShouldReturnOkAndUpdatedJsonOfUser() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(
+                        post(url)
+                                .contentType("application/json")
+                                .content(objectMapper.writeValueAsString(getUser()))
+
+                )
+                .andReturn();
+        User addedUser = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), User.class);
+        User updatedUser = getUser();
+        updatedUser.setId(addedUser.getId());
+        updatedUser.setName("Updated");
+
+        mockMvc.perform(put(url)
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(updatedUser)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Updated"));
+    }
+
+    @Test
+    void invalidIdUpdateShouldReturnBadRequest() throws Exception {
         mockMvc.perform(
                 post(url)
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(getUser()))
         );
-        User user = getUser();
-        user.setId(11111);
-        user.setName("Update");
+        User invalidIdUser = getUser();
+        invalidIdUser.setId(11111);
+        invalidIdUser.setName("Update");
         mockMvc.perform(put(url)
                         .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(user)))
+                        .content(objectMapper.writeValueAsString(invalidIdUser)))
                 .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void invalidIdUpdateShouldReturn400() throws Exception {
-        FilmorateApplication.main(new String[]{});
-        User user = getUser();
-        User invalidIdUser = getUser();
-        invalidIdUser.setId(100);
-        invalidIdUser.setName("Updated name");
-        doPost(user);
-        HttpResponse<String> response = doPut(invalidIdUser);
-        assertEquals(response.statusCode(), 500);
-    }
-
-    private HttpResponse<String> doPost(User user) throws IOException, InterruptedException {
-        URI uri = URI.create("http://localhost:8080" + url);
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder().uri(uri).header("Content-type", "application/json").POST(
-                HttpRequest.BodyPublishers.ofString(
-                        objectMapper.writeValueAsString(user)
-                )
-        ).build();
-        return client.send(request, HttpResponse.BodyHandlers.ofString());
-    }
-
-    private HttpResponse<String> doPut(User user) throws IOException, InterruptedException {
-        URI uri = URI.create("http://localhost:8080" + url);
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder().uri(uri).header("Content-type", "application/json").PUT(
-                HttpRequest.BodyPublishers.ofString(
-                        objectMapper.writeValueAsString(user)
-                )
-        ).build();
-        return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     private User getUser() {
