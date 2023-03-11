@@ -17,19 +17,19 @@ public class FilmController {
     private final FilmRepository films = new FilmRepository();
 
     @PostMapping
-    public Film add(@Valid @RequestBody Film film) {
+    public @ResponseBody Film add(@Valid @RequestBody Film film) {
         films.save(film);
         log.info("Добавлен фильм: {}", film);
         return film;
     }
 
     @GetMapping
-    public List<Film> list() {
+    public @ResponseBody List<Film> list() {
         return films.getAll();
     }
 
     @PutMapping
-    public Film update(@Valid @RequestBody Film film) throws ValidationException {
+    public @ResponseBody Film update(@Valid @RequestBody Film film) throws ValidationException {
         films.update(film);
         log.info("Обновлен фильм: {}", film);
         return film;

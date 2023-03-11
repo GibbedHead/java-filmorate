@@ -16,11 +16,17 @@ public class UserRepository {
 
     public void save(User user) {
         user.setId(generateId());
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
         users.put(user.getId(), user);
     }
 
     public void update(User user) throws ValidationException {
         if (users.containsKey(user.getId())) {
+            if (user.getName() == null || user.getName().isBlank()) {
+                user.setName(user.getLogin());
+            }
             users.put(user.getId(), user);
         } else {
             throw new ValidationException("Пользователь для обновления c id = " + user.getId() + " не найден");

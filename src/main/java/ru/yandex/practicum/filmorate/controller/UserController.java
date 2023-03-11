@@ -17,19 +17,19 @@ public class UserController {
     private final UserRepository users = new UserRepository();
 
     @PostMapping
-    public User add(@Valid @RequestBody User user) {
+    public @ResponseBody User add(@Valid @RequestBody User user) {
         users.save(user);
         log.info("Добавлен пользователь: {}", user);
         return user;
     }
 
     @GetMapping
-    public List<User> list() {
+    public @ResponseBody List<User> list() {
         return users.getAll();
     }
 
     @PutMapping
-    public User update(@Valid @RequestBody User user) throws ValidationException {
+    public @ResponseBody User update(@Valid @RequestBody User user) throws ValidationException {
         users.update(user);
         log.info("Обновлен пользователь: {}", user);
         return user;
