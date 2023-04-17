@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface UserStorage {
     void create(User user);
-    void update(User user) throws ValidationException;
+    void update(User user) throws UserNotFoundException;
     void delete(User user);
     List<User> findAll();
     User findById(long id) throws UserNotFoundException;

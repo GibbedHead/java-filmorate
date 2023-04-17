@@ -5,10 +5,8 @@ import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
@@ -20,17 +18,17 @@ public class InMemoryFilmStorage implements FilmStorage {
         films.put(film.getId(), film);
     }
 
-    public void update(Film film) throws ValidationException {
+    public void update(Film film) throws FilmNotFoundException {
         if (films.containsKey(film.getId())) {
             films.put(film.getId(), film);
         } else {
-            throw new ValidationException("Фильм для обновления c id = " + film.getId() + " не найден");
+            throw new FilmNotFoundException(String.format("Фильм для обновления c id = %d не найден", film.getId()));
         }
     }
 
     @Override
     public void delete(Film film) {
-
+        films.remove(film.getId());
     }
 
     public List<Film> findAll() {
@@ -42,7 +40,25 @@ public class InMemoryFilmStorage implements FilmStorage {
         if (films.containsKey(id)) {
             return films.get(id);
         }
-        throw new FilmNotFoundException(String.format("Фильм № %d не найден", id));
+        throw new FilmNotFoundException(String.format("Фильм c id = %d не найден", id));
+    }
+
+    @Override
+    public void addLike(long filmId, long userId) {
+        films.get(filmId).getLikes().add(userId);
+    }
+
+    @Override
+    public void deleteLike(long filmId, long userId) {
+        films.get(filmId).getLikes().remove(userId);
+    }
+
+    @Override
+    public List<Film> getTopLikedFilms() {
+        return films.values().stream()
+                .sorted(Comparator.comparingInt(f -> f.getLikes().size()))
+                .limit(10)
+                .collect(Collectors.toList());
     }
 
     private long generateId() {

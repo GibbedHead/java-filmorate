@@ -22,20 +22,20 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public void update(User user) throws ValidationException {
+    public void update(User user) throws UserNotFoundException {
         if (users.containsKey(user.getId())) {
             if (user.getName() == null || user.getName().isBlank()) {
                 user.setName(user.getLogin());
             }
             users.put(user.getId(), user);
         } else {
-            throw new ValidationException("Пользователь для обновления c id = " + user.getId() + " не найден");
+            throw new UserNotFoundException("Пользователь для обновления c id = " + user.getId() + " не найден");
         }
     }
 
     @Override
     public void delete(User user) {
-
+        users.remove(user.getId());
     }
 
     @Override
