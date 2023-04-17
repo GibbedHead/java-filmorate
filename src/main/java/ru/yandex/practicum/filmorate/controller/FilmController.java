@@ -2,7 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.dao.FilmRepository;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -14,17 +14,17 @@ import java.util.List;
 @Slf4j
 public class FilmController {
 
-    private final FilmRepository films = new FilmRepository();
+    private final InMemoryFilmStorage films = new InMemoryFilmStorage();
 
     @PostMapping
     public @ResponseBody Film add(@Valid @RequestBody Film film) {
-        films.save(film);
+        films.add(film);
         log.info("Добавлен фильм: {}", film);
         return film;
     }
 
     @GetMapping
-    public @ResponseBody List<Film> list() {
+    public @ResponseBody List<Film> getAll() {
         return films.getAll();
     }
 

@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.dao;
+package ru.yandex.practicum.filmorate.storage;
 
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class FilmRepository {
+public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Long, Film> films = new HashMap<>();
     private long id;
 
-    public void save(Film film) {
+    public void add(Film film) {
         film.setId(generateId());
         films.put(film.getId(), film);
     }
@@ -25,6 +25,11 @@ public class FilmRepository {
         } else {
             throw new ValidationException("Фильм для обновления c id = " + film.getId() + " не найден");
         }
+    }
+
+    @Override
+    public void delete(Film film) {
+
     }
 
     public List<Film> getAll() {
