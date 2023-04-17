@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.storage;
 
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.*;
@@ -15,6 +14,9 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     public void create(Film film) {
         film.setId(generateId());
+        if (film.getLikes() == null) {
+            film.setLikes(new HashSet<>());
+        }
         films.put(film.getId(), film);
     }
 
@@ -54,10 +56,14 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> getTopLikedFilms() {
+    public List<Film> getTopLikedFilms(long count) {
         return films.values().stream()
-                .sorted(Comparator.comparingInt(f -> f.getLikes().size()))
-                .limit(10)
+                .sorted(
+                        Comparator.comparingInt(
+                                (Film f) -> f.getLikes().size()
+                        ).reversed()
+                )
+                .limit(count)
                 .collect(Collectors.toList());
     }
 

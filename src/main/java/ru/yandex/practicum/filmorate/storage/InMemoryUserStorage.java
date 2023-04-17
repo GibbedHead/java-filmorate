@@ -18,6 +18,9 @@ public class InMemoryUserStorage implements UserStorage {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
+        if (user.getFriends() == null) {
+            user.setFriends(new HashSet<>());
+        }
         users.put(user.getId(), user);
     }
 

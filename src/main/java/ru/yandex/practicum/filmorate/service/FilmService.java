@@ -24,7 +24,13 @@ public class FilmService {
         filmStorage.deleteLike(filmStorage.findById(filmId).getId(), userStorage.findById(userId).getId());
     }
 
-    public List<Film> getTopLikedFilms() {
-        return filmStorage.getTopLikedFilms();
+    public List<Film> getTopLikedFilms(long count) {
+        return filmStorage.getTopLikedFilms(count);
+    }
+
+    public Film delete(long id) throws FilmNotFoundException {
+        Film film = filmStorage.findById(id);
+        filmStorage.delete(film);
+        return film;
     }
 }
