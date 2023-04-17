@@ -1,10 +1,12 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -12,25 +14,27 @@ import java.util.List;
 @RestController
 @RequestMapping("/films")
 @Slf4j
+@RequiredArgsConstructor
 public class FilmController {
 
-    private final InMemoryFilmStorage films = new InMemoryFilmStorage();
+    private final FilmService filmService;
+    private final FilmStorage filmStorage;
 
     @PostMapping
-    public @ResponseBody Film add(@Valid @RequestBody Film film) {
-        films.add(film);
+    public Film add(@Valid @RequestBody Film film) {
+        filmStorage.create(film);
         log.info("Добавлен фильм: {}", film);
         return film;
     }
 
     @GetMapping
-    public @ResponseBody List<Film> getAll() {
-        return films.getAll();
+    public List<Film> getAll() {
+        return filmStorage.findAll();
     }
 
     @PutMapping
-    public @ResponseBody Film update(@Valid @RequestBody Film film) throws ValidationException {
-        films.update(film);
+    public Film update(@Valid @RequestBody Film film) throws ValidationException {
+        filmStorage.update(film);
         log.info("Обновлен фильм: {}", film);
         return film;
     }
