@@ -4,9 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.time.LocalDate;
 
@@ -22,6 +25,11 @@ class FilmControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockBean
+    private FilmService filmService;
+    @MockBean
+    private FilmStorage filmStorage;
 
     private final String url = "/films";
 
@@ -160,7 +168,8 @@ class FilmControllerTest {
                 "Name",
                 "Desc",
                 LocalDate.of(1990, 1, 1),
-                90
+                90,
+                null
         );
     }
 
@@ -170,7 +179,8 @@ class FilmControllerTest {
                 "",
                 "Desc",
                 LocalDate.of(1990, 1, 1),
-                90
+                90,
+                null
         );
     }
 
@@ -180,7 +190,8 @@ class FilmControllerTest {
                 "Name",
                 "D".repeat(300),
                 LocalDate.of(1990, 1, 1),
-                90
+                90,
+                null
         );
     }
 
@@ -190,7 +201,8 @@ class FilmControllerTest {
                 "Name",
                 "Desc",
                 LocalDate.of(1790, 1, 1),
-                90
+                90,
+                null
         );
     }
 
@@ -200,7 +212,8 @@ class FilmControllerTest {
                 "Name",
                 "Desc",
                 LocalDate.of(1990, 1, 1),
-                -90
+                -90,
+                null
         );
     }
 }

@@ -6,9 +6,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 
@@ -25,6 +28,12 @@ class UserControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockBean
+    private UserStorage userStorage;
+
+    @MockBean
+    private UserService userService;
 
     private final String url = "/users";
 
@@ -196,7 +205,8 @@ class UserControllerTest {
                 "user@mail.com",
                 "Login",
                 "Name",
-                LocalDate.of(1990, 1, 1)
+                LocalDate.of(1990, 1, 1),
+                null
         );
     }
 
@@ -206,7 +216,8 @@ class UserControllerTest {
                 "",
                 "Login",
                 "Name",
-                LocalDate.of(1990, 1, 1)
+                LocalDate.of(1990, 1, 1),
+                null
         );
     }
 
@@ -216,7 +227,8 @@ class UserControllerTest {
                 "user@mail.com",
                 "",
                 "Name",
-                LocalDate.of(1990, 1, 1)
+                LocalDate.of(1990, 1, 1),
+                null
         );
     }
 
@@ -226,7 +238,8 @@ class UserControllerTest {
                 "user@mail.com",
                 "Lo Gin",
                 "Name",
-                LocalDate.of(1990, 1, 1)
+                LocalDate.of(1990, 1, 1),
+                null
         );
     }
 
@@ -236,7 +249,8 @@ class UserControllerTest {
                 "user@mail.com",
                 "Login",
                 "",
-                LocalDate.of(1990, 1, 1)
+                LocalDate.of(1990, 1, 1),
+                null
         );
     }
 
@@ -246,7 +260,8 @@ class UserControllerTest {
                 "user@mail.com",
                 "Login",
                 "Name",
-                LocalDate.of(2100, 1, 1)
+                LocalDate.of(2100, 1, 1),
+                null
         );
     }
 }
