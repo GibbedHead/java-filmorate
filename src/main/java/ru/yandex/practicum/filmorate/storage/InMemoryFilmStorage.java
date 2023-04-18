@@ -22,6 +22,9 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     public void update(Film film) throws FilmNotFoundException {
         if (films.containsKey(film.getId())) {
+            if (film.getLikes() == null) {
+                film.setLikes(new HashSet<>());
+            }
             films.put(film.getId(), film);
         } else {
             throw new FilmNotFoundException(String.format("Фильм для обновления c id = %d не найден", film.getId()));

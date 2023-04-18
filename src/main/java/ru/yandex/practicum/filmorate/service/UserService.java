@@ -17,12 +17,14 @@ public class UserService {
         User user = userStorage.findById(userId);
         User friend = userStorage.findById(friendId);
         userStorage.addFriend(userId, friendId);
+        userStorage.addFriend(friendId, userId);
     }
 
     public void deleteFriend(long userId, long friendId) throws UserNotFoundException {
         User user = userStorage.findById(userId);
         User friend = userStorage.findById(friendId);
         userStorage.deleteFriend(userId, friendId);
+        userStorage.deleteFriend(friendId, userId);
     }
 
     public List<User> getFriends(long id) throws UserNotFoundException {
@@ -34,5 +36,11 @@ public class UserService {
         User user1 = userStorage.findById(id1);
         User user2 = userStorage.findById(id2);
         return userStorage.getCommonFriends(id1, id2);
+    }
+
+    public User delete(long id) throws UserNotFoundException {
+        User user = userStorage.findById(id);
+        userStorage.delete(user);
+        return user;
     }
 }

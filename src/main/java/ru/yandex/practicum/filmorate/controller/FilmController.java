@@ -30,11 +30,13 @@ public class FilmController {
 
     @GetMapping
     public List<Film> findAll() {
+        log.info("Показываем все фильмы");
         return filmStorage.findAll();
     }
 
     @GetMapping("/{id}")
     public Film findById(@PathVariable long id) throws FilmNotFoundException {
+        log.info("Показываем фильм {}", id);
         return filmStorage.findById(id);
     }
 
@@ -69,6 +71,7 @@ public class FilmController {
     public List<Film> getTopLikedFilms(
             @RequestParam(name = "count", defaultValue = "10", required = false) Long count
     ) {
+        log.info("Показываем {} самых популярных фильмов", count);
         return filmService.getTopLikedFilms(count);
     }
 }
