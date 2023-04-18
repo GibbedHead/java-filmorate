@@ -18,11 +18,11 @@ public class Film {
     private long id;
     @NotBlank
     private String name;
-    @Size(max=200)
+    @Size(max = 200)
     private String description;
     @Past
     @IsAfter(fromDate = "1895-12-28")
-    @DateTimeFormat( pattern="yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate releaseDate;
     @Positive
     private int duration;
