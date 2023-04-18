@@ -7,7 +7,6 @@ import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -19,11 +18,10 @@ import java.util.List;
 public class FilmController {
 
     private final FilmService filmService;
-    private final FilmStorage filmStorage;
 
     @PostMapping
     public Film add(@Valid @RequestBody Film film) {
-        filmStorage.create(film);
+        filmService.create(film);
         log.info("Добавлен фильм: {}", film);
         return film;
     }
@@ -31,20 +29,20 @@ public class FilmController {
     @GetMapping
     public List<Film> findAll() {
         log.info("Показываем все фильмы");
-        return filmStorage.findAll();
+        return filmService.findAll();
     }
 
     @GetMapping("/{id}")
     public Film findById(@PathVariable long id) throws FilmNotFoundException {
         log.info("Показываем фильм {}", id);
-        return filmStorage.findById(id);
+        return filmService.findById(id);
     }
 
     @PutMapping
     public Film update(@Valid @RequestBody Film film) throws FilmNotFoundException {
-        filmStorage.update(film);
+
         log.info("Обновлен фильм: {}", film);
-        return film;
+        return filmService.update(film);
     }
 
     @DeleteMapping("/{id}")

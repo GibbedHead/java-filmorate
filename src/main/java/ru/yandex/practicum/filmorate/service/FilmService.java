@@ -16,6 +16,23 @@ public class FilmService {
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
 
+    public void create(Film film) {
+        filmStorage.create(film);
+    }
+
+    public List<Film> findAll() {
+        return filmStorage.findAll();
+    }
+
+    public Film findById(long id) throws FilmNotFoundException {
+        return filmStorage.findById(id);
+    }
+
+    public Film update(Film film) throws FilmNotFoundException {
+        filmStorage.update(film);
+        return film;
+    }
+
     public void addLike(long filmId, long userId) throws FilmNotFoundException, UserNotFoundException {
         filmStorage.addLike(filmStorage.findById(filmId).getId(), userStorage.findById(userId).getId());
     }
