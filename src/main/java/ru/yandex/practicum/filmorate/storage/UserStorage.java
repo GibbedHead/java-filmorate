@@ -15,12 +15,4 @@ public interface UserStorage {
     List<User> findAll();
 
     User findById(long id) throws UserNotFoundException;
-
-    void addFriend(long userId, long friendId);
-
-    void deleteFriend(long userId, long friendId);
-
-    List<User> getFriends(long id);
-
-    public List<User> getCommonFriends(long id1, long id2);
 }

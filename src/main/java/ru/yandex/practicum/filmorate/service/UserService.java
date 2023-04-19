@@ -6,7 +6,10 @@ import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -16,26 +19,40 @@ public class UserService {
     public void addFriend(long userId, long friendId) throws UserNotFoundException {
         User user = userStorage.findById(userId);
         User friend = userStorage.findById(friendId);
-        userStorage.addFriend(userId, friendId);
-        userStorage.addFriend(friendId, userId);
+        user.getFriends().add(friend.getId());
+        friend.getFriends().add(user.getId());
+        userStorage.update(user);
+        userStorage.update(friend);
     }
 
     public void deleteFriend(long userId, long friendId) throws UserNotFoundException {
         User user = userStorage.findById(userId);
         User friend = userStorage.findById(friendId);
-        userStorage.deleteFriend(userId, friendId);
-        userStorage.deleteFriend(friendId, userId);
+        user.getFriends().remove(friend.getId());
+        friend.getFriends().remove(user.getId());
+        userStorage.update(user);
+        userStorage.update(friend);
     }
 
     public List<User> getFriends(long id) throws UserNotFoundException {
         User user = userStorage.findById(id);
-        return userStorage.getFriends(id);
+        List<User> friends = new ArrayList<>();
+        for (long friendId : user.getFriends()) {
+            friends.add(userStorage.findById(friendId));
+        }
+        return friends;
     }
 
     public List<User> getCommonFriends(long id1, long id2) throws UserNotFoundException {
         User user1 = userStorage.findById(id1);
         User user2 = userStorage.findById(id2);
-        return userStorage.getCommonFriends(id1, id2);
+        Set<Long> commonFriendsIds = new HashSet<>(user1.getFriends());
+        commonFriendsIds.retainAll(user2.getFriends());
+        List<User> commonFriends = new ArrayList<>();
+        for (long friendId : commonFriendsIds) {
+            commonFriends.add(userStorage.findById(friendId));
+        }
+        return commonFriends;
     }
 
     public User delete(long id) throws UserNotFoundException {
