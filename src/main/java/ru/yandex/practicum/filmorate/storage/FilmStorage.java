@@ -15,10 +15,4 @@ public interface FilmStorage {
     List<Film> findAll();
 
     Film findById(long id) throws FilmNotFoundException;
-
-    void addLike(long filmId, long userId);
-
-    void deleteLike(long filmId, long userId);
-
-    List<Film> getTopLikedFilms(long count);
 }

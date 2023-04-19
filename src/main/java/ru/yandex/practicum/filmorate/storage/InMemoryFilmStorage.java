@@ -5,7 +5,6 @@ import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
@@ -46,28 +45,6 @@ public class InMemoryFilmStorage implements FilmStorage {
             return films.get(id);
         }
         throw new FilmNotFoundException(String.format("Фильм c id = %d не найден", id));
-    }
-
-    @Override
-    public void addLike(long filmId, long userId) {
-        films.get(filmId).getLikes().add(userId);
-    }
-
-    @Override
-    public void deleteLike(long filmId, long userId) {
-        films.get(filmId).getLikes().remove(userId);
-    }
-
-    @Override
-    public List<Film> getTopLikedFilms(long count) {
-        return films.values().stream()
-                .sorted(
-                        Comparator.comparingInt(
-                                (Film f) -> f.getLikes().size()
-                        ).reversed()
-                )
-                .limit(count)
-                .collect(Collectors.toList());
     }
 
     private long generateId() {
