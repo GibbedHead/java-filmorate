@@ -24,7 +24,8 @@ class FilmorateApplicationTests {
 				"Test name",
 				"Test desc",
 				LocalDate.of(1800, 1, 1),
-				90
+				90,
+				null
 		);
 		Set<ConstraintViolation<Film>> violations = validator.validate(film);
 		assertEquals(violations.size(), 1);
@@ -37,7 +38,8 @@ class FilmorateApplicationTests {
 				"Test name",
 				"Test desc",
 				LocalDate.of(1990, 1, 1),
-				90
+				90,
+				null
 		);
 		Set<ConstraintViolation<Film>> violations = validator.validate(film);
 		assertEquals(violations.size(), 0);

@@ -1,26 +1,30 @@
 package ru.yandex.practicum.filmorate.model;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class User {
-    private long id;
+    long id;
     @NotBlank
     @Email
-    private String email;
+    String email;
     @NotBlank
-    @Pattern(regexp="\\S+")
-    private String login;
-    private String name;
+    @Pattern(regexp = "\\S+")
+    String login;
+    String name;
     @PastOrPresent
-    private LocalDate birthday;
-
+    LocalDate birthday;
+    Set<Long> friends;
 }
