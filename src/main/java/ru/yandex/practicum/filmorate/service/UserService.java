@@ -22,7 +22,7 @@ public class UserService {
         this.userStorage = userStorage;
     }
 
-    public User create(User user) {
+    public User create(User user) throws UserNotFoundException {
         long id = userStorage.create(user);
         User addedUser = userStorage.findById(id);
         log.info("Добавлен пользователь: {}", addedUser);
@@ -30,17 +30,18 @@ public class UserService {
     }
 
     public User update(User user) throws UserNotFoundException {
-        if (userStorage.isUserExists(user)) {
-            userStorage.update(user);
-            User updatedUser = userStorage.findById(user.getId());
-            log.info("Обновлен пользователь: {}", updatedUser);
-            return updatedUser;
-        } else {
-            log.info("Пользователь не найден: {}", user);
-            throw new UserNotFoundException(String.format("Пользователь не найден: %s", user.toString()));
-        }
+        User sourceUser = userStorage.findById(user.getId());
+        userStorage.update(user);
+        User updatedUser = userStorage.findById(user.getId());
+        log.info("Обновлен пользователь c {} на {}", sourceUser, updatedUser);
+        return updatedUser;
     }
 
+    public void delete(long id) throws UserNotFoundException {
+        User testUserExist = userStorage.findById(id);
+        userStorage.delete(id);
+        log.info("Удален пользователь id = {}", id);
+    }
 
     public void addFriend(long userId, long friendId) {
 
@@ -58,9 +59,5 @@ public class UserService {
         return new ArrayList<>();
     }
 
-    public User delete(long id) {
-        User user = userStorage.findById(id);
-        userStorage.delete(user);
-        return user;
-    }
+
 }

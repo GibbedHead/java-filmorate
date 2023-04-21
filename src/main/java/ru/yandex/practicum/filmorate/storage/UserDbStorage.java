@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.sql.Date;
@@ -61,8 +62,14 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public void delete(User user) {
-
+    public void delete(long id) {
+        String sql = "" +
+                "DELETE " +
+                "FROM " +
+                "  USERS " +
+                "WHERE " +
+                "  USER_ID = ? ";
+        jdbcTemplate.update(sql, id);
     }
 
     @Override
@@ -76,15 +83,23 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public User findById(long id) {
+    public User findById(long id) throws UserNotFoundException {
         String sql = "" +
                 "SELECT" +
                 "  * " +
                 "FROM " +
                 "  USERS " +
                 "WHERE " +
-                "  USER_ID = ?";
-        return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> makeUser(rs), id);
+                "  USER_ID = ? " +
+                "LIMIT " +
+                "  1";
+        List<User> userList = jdbcTemplate.query(sql, (rs, rowNum) -> makeUser(rs), id);
+        if (userList.isEmpty()) {
+            log.info("Пользователь id = {} не найден", id);
+            throw new UserNotFoundException(String.format("Пользователь id = %d не найден", id));
+        } else {
+            return userList.get(0);
+        }
     }
 
     private User makeUser(ResultSet rs) throws SQLException {
@@ -101,12 +116,5 @@ public class UserDbStorage implements UserStorage {
                 email,
                 birthday
         );
-    }
-
-    @Override
-    public boolean isUserExists(User user) {
-        String checkSql = "SELECT COUNT(USER_ID) FROM USERS WHERE USER_ID = ?";
-        int count = jdbcTemplate.queryForObject(checkSql, new Object[]{user.getId()}, Integer.class);
-        return count > 0;
     }
 }

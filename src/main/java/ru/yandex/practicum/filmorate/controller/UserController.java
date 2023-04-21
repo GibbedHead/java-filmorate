@@ -23,19 +23,21 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public User add(@Valid @RequestBody User user) {
+    public User add(@Valid @RequestBody User user) throws UserNotFoundException {
         log.info("Запрос создания пользователя: {}", user);
         return userService.create(user);
     }
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public List<User> findAll() {
         log.info("Показываем всех пользователей");
         return userStorage.findAll();
     }
 
     @GetMapping("/{id}")
-    public User findById(@PathVariable long id) {
+    @ResponseStatus(HttpStatus.OK)
+    public User findById(@PathVariable long id) throws UserNotFoundException {
         log.info("Показываем пользователя: {}", id);
         return userStorage.findById(id);
     }
@@ -48,9 +50,10 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public User delete(@PathVariable long id) throws UserNotFoundException {
-        log.info("Удален пользователь {}", id);
-        return userService.delete(id);
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable long id) throws UserNotFoundException {
+        log.info("Запрос удаления пользователя с id: {}", id);
+        userService.delete(id);
     }
 
     @PutMapping("/{id}/friends/{friendId}")

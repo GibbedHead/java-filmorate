@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage;
 
+import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.List;
@@ -9,11 +10,9 @@ public interface UserStorage {
 
     void update(User user);
 
-    void delete(User user);
+    void delete(long id);
 
     List<User> findAll();
 
-    User findById(long id);
-
-    boolean isUserExists(User user);
+    User findById(long id) throws UserNotFoundException;
 }
