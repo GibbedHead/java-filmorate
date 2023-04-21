@@ -15,4 +15,8 @@ public interface UserStorage {
     List<User> findAll();
 
     User findById(long id) throws UserNotFoundException;
+
+    void createOrConfirmFriendship(long user1Id, long user2Id);
+
+    List<User> getFriends(long id);
 }

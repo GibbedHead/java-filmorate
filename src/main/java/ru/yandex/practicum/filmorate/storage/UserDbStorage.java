@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -100,6 +101,56 @@ public class UserDbStorage implements UserStorage {
         } else {
             return userList.get(0);
         }
+    }
+
+    @Override
+    public void createOrConfirmFriendship(long user1Id, long user2Id) {
+        // проверяем, есть ли уже запрос на дружбу между пользователями
+        String query = "SELECT STATUS FROM PUBLIC.FRIENDS WHERE REQUESTER_ID = ? AND ACCEPTER_ID = ?";
+        List<String> statuses = jdbcTemplate.query(
+                query,
+                new Object[]{user1Id, user2Id},
+                new BeanPropertyRowMapper<>(String.class)
+        );
+
+        if (statuses.isEmpty()) {
+            // запрос на дружбу не существует, создаем новую запись
+            String insertQuery = "INSERT INTO PUBLIC.FRIENDS (REQUESTER_ID, ACCEPTER_ID, STATUS) VALUES (?, ?, 'requested')";
+            jdbcTemplate.update(insertQuery, user1Id, user2Id);
+            log.info("Запрос дружбы {} и {} добавлен", user1Id, user2Id);
+        } else if (statuses.get(0).equals("requested")) {
+            // запрос на дружбу уже есть и его отправил user1Id
+            String updateQuery = "UPDATE PUBLIC.FRIENDS SET STATUS = 'accepted' WHERE REQUESTER_ID = ? AND ACCEPTER_ID = ?";
+            jdbcTemplate.update(updateQuery, user1Id, user2Id);
+
+            // создаем запись в обратном порядке для user2Id, который подтвердил дружбу
+            String insertQuery = "INSERT INTO PUBLIC.FRIENDS (REQUESTER_ID, ACCEPTER_ID, STATUS) VALUES (?, ?, 'accepted')";
+            jdbcTemplate.update(insertQuery, user2Id, user1Id);
+            log.info("Дружба {} и {} подтверждена", user1Id, user2Id);
+        }
+    }
+
+    @Override
+    public List<User> getFriends(long id) {
+        String sql = "" +
+                "SELECT " +
+                "  u.* " +
+                "FROM " +
+                "  PUBLIC.USERS u " +
+                "  INNER JOIN PUBLIC.FRIENDS f ON (" +
+                "    u.USER_ID = f.REQUESTER_ID " +
+                "    OR u.USER_ID = f.ACCEPTER_ID" +
+                "  ) " +
+                "WHERE " +
+                "  (" +
+                "    f.REQUESTER_ID = ? " +
+                "    OR (" +
+                "      f.ACCEPTER_ID = ? " +
+                "      AND f.STATUS = 'accepted'" +
+                "    )" +
+                "  ) " +
+                "  AND u.USER_ID != ?;";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> makeUser(rs), id, id, id);
     }
 
     private User makeUser(ResultSet rs) throws SQLException {

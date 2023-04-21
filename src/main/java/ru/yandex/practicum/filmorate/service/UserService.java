@@ -23,6 +23,9 @@ public class UserService {
     }
 
     public User create(User user) throws UserNotFoundException {
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
         long id = userStorage.create(user);
         User addedUser = userStorage.findById(id);
         log.info("Добавлен пользователь: {}", addedUser);
@@ -51,8 +54,10 @@ public class UserService {
         return userStorage.findById(id);
     }
 
-    public void addFriend(long userId, long friendId) {
-
+    public void addFriend(long userId, long friendId) throws UserNotFoundException {
+        User user = userStorage.findById(userId);
+        User friend = userStorage.findById(friendId);
+        userStorage.createOrConfirmFriendship(userId, friendId);
     }
 
     public void deleteFriend(long userId, long friendId) {
@@ -60,7 +65,7 @@ public class UserService {
     }
 
     public List<User> getFriends(long id) {
-        return new ArrayList<>();
+        return userStorage.getFriends(id);
     }
 
     public List<User> getCommonFriends(long id1, long id2) {
