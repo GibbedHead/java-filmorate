@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -11,18 +12,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 public class UserService {
     @Autowired
     @Qualifier("UserDbStorage")
     private final UserStorage userStorage;
 
-    public void create(User user) {
-        userStorage.create(user);
-    }
-
     public UserService(UserStorage userStorage) {
         this.userStorage = userStorage;
     }
+
+    public User create(User user) {
+        long id = userStorage.create(user);
+        User addedUser = userStorage.findById(id);
+        log.info("Добавлен пользователь: {}", addedUser);
+        return addedUser;
+    }
+
+    public User update(User user) throws UserNotFoundException {
+        if (userStorage.isUserExists(user)) {
+            userStorage.update(user);
+            User updatedUser = userStorage.findById(user.getId());
+            log.info("Обновлен пользователь: {}", updatedUser);
+            return updatedUser;
+        } else {
+            log.info("Пользователь не найден: {}", user);
+            throw new UserNotFoundException(String.format("Пользователь не найден: %s", user.toString()));
+        }
+    }
+
 
     public void addFriend(long userId, long friendId) {
 
@@ -40,7 +58,7 @@ public class UserService {
         return new ArrayList<>();
     }
 
-    public User delete(long id) throws UserNotFoundException {
+    public User delete(long id) {
         User user = userStorage.findById(id);
         userStorage.delete(user);
         return user;

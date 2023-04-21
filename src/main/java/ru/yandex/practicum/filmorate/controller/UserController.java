@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -21,10 +22,10 @@ public class UserController {
     private final UserStorage userStorage;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public User add(@Valid @RequestBody User user) {
-        userService.create(user);
-        log.info("Добавлен пользователь: {}", user);
-        return user;
+        log.info("Запрос создания пользователя: {}", user);
+        return userService.create(user);
     }
 
     @GetMapping
@@ -34,16 +35,16 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public User findById(@PathVariable long id) throws UserNotFoundException {
+    public User findById(@PathVariable long id) {
         log.info("Показываем пользователя: {}", id);
         return userStorage.findById(id);
     }
 
     @PutMapping
+    @ResponseStatus(HttpStatus.OK)
     public User update(@Valid @RequestBody User user) throws UserNotFoundException {
-        userStorage.update(user);
-        log.info("Обновлен пользователь: {}", user);
-        return user;
+        log.info("Запрос обновления пользователя: {}", user);
+        return userService.update(user);
     }
 
     @DeleteMapping("/{id}")

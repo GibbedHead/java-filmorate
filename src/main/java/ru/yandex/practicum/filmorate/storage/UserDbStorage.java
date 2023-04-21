@@ -23,7 +23,7 @@ public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public void create(User user) {
+    public long create(User user) {
         String sql = "INSERT INTO PUBLIC.USERS (EMAIL,LOGIN,NAME,BIRTHDAY) " +
                 "VALUES (?,?,?,?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -35,13 +35,29 @@ public class UserDbStorage implements UserStorage {
             stmt.setDate(4, Date.valueOf(user.getBirthday()));
             return stmt;
         }, keyHolder);
-        long id = Objects.requireNonNull(keyHolder.getKey()).longValue();
-        user.setId(id);
+        return Objects.requireNonNull(keyHolder.getKey()).longValue();
     }
 
     @Override
     public void update(User user) {
-
+        String updateSQL = "" +
+                "UPDATE " +
+                "  USERS " +
+                "SET " +
+                "  EMAIL = ?, " +
+                "  LOGIN = ?, " +
+                "  NAME = ?, " +
+                "  BIRTHDAY = ? " +
+                "WHERE " +
+                "  USER_ID = ?";
+        jdbcTemplate.update(
+                updateSQL,
+                user.getEmail(),
+                user.getLogin(),
+                user.getName(),
+                user.getBirthday(),
+                user.getId()
+        );
     }
 
     @Override
@@ -85,5 +101,12 @@ public class UserDbStorage implements UserStorage {
                 email,
                 birthday
         );
+    }
+
+    @Override
+    public boolean isUserExists(User user) {
+        String checkSql = "SELECT COUNT(USER_ID) FROM USERS WHERE USER_ID = ?";
+        int count = jdbcTemplate.queryForObject(checkSql, new Object[]{user.getId()}, Integer.class);
+        return count > 0;
     }
 }
