@@ -43,6 +43,14 @@ public class UserService {
         log.info("Удален пользователь id = {}", id);
     }
 
+    public List<User> findAll() {
+        return userStorage.findAll();
+    }
+
+    public User findById(long id) throws UserNotFoundException {
+        return userStorage.findById(id);
+    }
+
     public void addFriend(long userId, long friendId) {
 
     }

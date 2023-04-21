@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -19,7 +18,6 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final UserStorage userStorage;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -31,15 +29,15 @@ public class UserController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<User> findAll() {
-        log.info("Показываем всех пользователей");
-        return userStorage.findAll();
+        log.info("Запрос всех пользователей");
+        return userService.findAll();
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public User findById(@PathVariable long id) throws UserNotFoundException {
-        log.info("Показываем пользователя: {}", id);
-        return userStorage.findById(id);
+        log.info("Запрос пользователя id = {}", id);
+        return userService.findById(id);
     }
 
     @PutMapping
