@@ -76,7 +76,8 @@ public class UserController {
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public List<User> getCommonFriends(@PathVariable long id, @PathVariable long otherId) {
+    @ResponseStatus(HttpStatus.OK)
+    public List<User> getCommonFriends(@PathVariable long id, @PathVariable long otherId) throws UserNotFoundException {
         log.info("Запрос общих друзей пользователя {} и {}", id, otherId);
         return userService.getCommonFriends(id, otherId);
     }
