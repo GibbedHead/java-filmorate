@@ -19,4 +19,6 @@ public interface UserStorage {
     void createOrConfirmFriendship(long user1Id, long user2Id);
 
     List<User> getFriends(long id);
+
+    void deleteFriend(long user1Id, long user2Id);
 }

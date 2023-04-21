@@ -153,6 +153,25 @@ public class UserDbStorage implements UserStorage {
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeUser(rs), id, id, id);
     }
 
+    @Override
+    public void deleteFriend(long user1Id, long user2Id) {
+        String sql = "DELETE FROM " +
+                "  PUBLIC.FRIENDS " +
+                "WHERE " +
+                "  REQUESTER_ID = ?" +
+                "  AND ACCEPTER_ID = ?" +
+                "  AND STATUS = 'requested';" +
+                "UPDATE " +
+                "  PUBLIC.FRIENDS " +
+                "SET " +
+                "  STATUS = 'requested' " +
+                "WHERE " +
+                "  REQUESTER_ID = ?" +
+                "  AND ACCEPTER_ID = ?" +
+                "  AND STATUS = 'accepted'";
+        jdbcTemplate.update(sql, user1Id, user2Id, user2Id, user1Id);
+    }
+
     private User makeUser(ResultSet rs) throws SQLException {
         long id = rs.getLong("USER_ID");
         String email = rs.getString("EMAIL");

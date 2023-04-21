@@ -54,17 +54,21 @@ public class UserService {
         return userStorage.findById(id);
     }
 
-    public void addFriend(long userId, long friendId) throws UserNotFoundException {
-        User user = userStorage.findById(userId);
-        User friend = userStorage.findById(friendId);
-        userStorage.createOrConfirmFriendship(userId, friendId);
+    public void addFriend(long user1Id, long user2Id) throws UserNotFoundException {
+        User user1 = userStorage.findById(user1Id);
+        User user2 = userStorage.findById(user2Id);
+        userStorage.createOrConfirmFriendship(user1Id, user2Id);
     }
 
-    public void deleteFriend(long userId, long friendId) {
-
+    public void deleteFriend(long user1Id, long user2Id) throws UserNotFoundException {
+        User user1 = userStorage.findById(user1Id);
+        User user2 = userStorage.findById(user2Id);
+        userStorage.deleteFriend(user1Id, user2Id);
+        log.info("Дружба {} и {} удалена", user1Id, user2Id);
     }
 
-    public List<User> getFriends(long id) {
+    public List<User> getFriends(long id) throws UserNotFoundException {
+        User user = userStorage.findById(id);
         return userStorage.getFriends(id);
     }
 

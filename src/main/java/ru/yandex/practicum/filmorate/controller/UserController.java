@@ -62,14 +62,15 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    public void deleteFriend(@PathVariable long id, @PathVariable long friendId) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteFriend(@PathVariable long id, @PathVariable long friendId) throws UserNotFoundException {
         log.info("Запрос удаления дружбы {} и {}", id, friendId);
         userService.deleteFriend(id, friendId);
     }
 
     @GetMapping("/{id}/friends")
     @ResponseStatus(HttpStatus.OK)
-    public List<User> getFriends(@PathVariable long id) {
+    public List<User> getFriends(@PathVariable long id) throws UserNotFoundException {
         log.info("Запрос всех друзей пользователя {}", id);
         return userService.getFriends(id);
     }
