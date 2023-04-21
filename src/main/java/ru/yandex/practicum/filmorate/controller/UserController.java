@@ -22,7 +22,7 @@ public class UserController {
 
     @PostMapping
     public User add(@Valid @RequestBody User user) {
-        userStorage.create(user);
+        userService.create(user);
         log.info("Добавлен пользователь: {}", user);
         return user;
     }
@@ -53,25 +53,25 @@ public class UserController {
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public void addFriend(@PathVariable long id, @PathVariable long friendId) throws UserNotFoundException {
+    public void addFriend(@PathVariable long id, @PathVariable long friendId) {
         log.info("Пользователи {} и {} подружились", id, friendId);
         userService.addFriend(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    public void deleteFriend(@PathVariable long id, @PathVariable long friendId) throws UserNotFoundException {
+    public void deleteFriend(@PathVariable long id, @PathVariable long friendId) {
         log.info("Пользователи {} и {} перестали дружить", id, friendId);
         userService.deleteFriend(id, friendId);
     }
 
     @GetMapping("/{id}/friends")
-    public List<User> getFriends(@PathVariable long id) throws UserNotFoundException {
+    public List<User> getFriends(@PathVariable long id) {
         log.info("Показываем всех друзей пользователя {}", id);
         return userService.getFriends(id);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public List<User> getCommonFriends(@PathVariable long id, @PathVariable long otherId) throws UserNotFoundException {
+    public List<User> getCommonFriends(@PathVariable long id, @PathVariable long otherId) {
         log.info("Показываем общих друзей пользователя {} и {}", id, otherId);
         return userService.getCommonFriends(id, otherId);
     }
