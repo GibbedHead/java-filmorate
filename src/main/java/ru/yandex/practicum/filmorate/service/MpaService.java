@@ -13,7 +13,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class MpaService {
-    final private MpaStorage mpaStorage;
+    private final MpaStorage mpaStorage;
 
     public List<Mpa> findAll() {
         return mpaStorage.findAll();
