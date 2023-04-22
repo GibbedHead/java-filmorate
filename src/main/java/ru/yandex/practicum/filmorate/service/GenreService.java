@@ -13,7 +13,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class GenreService {
-    final private GenreStorage genreStorage;
+    private final GenreStorage genreStorage;
 
     public List<Genre> findAll() {
         return genreStorage.findAll();
