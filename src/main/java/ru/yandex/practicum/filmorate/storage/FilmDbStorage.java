@@ -66,7 +66,13 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> findAll() {
-        return null;
+        String sql = "SELECT f.*, m.MPA_ID, m.MPA_NAME, g.GENRE_ID, g.GENRE_NAME " +
+                "FROM PUBLIC.FILM f " +
+                "LEFT JOIN PUBLIC.MPA m ON f.MPA_ID = m.MPA_ID " +
+                "LEFT JOIN PUBLIC.FILM_GENRE fg ON f.FILM_ID = fg.FILM_ID " +
+                "LEFT JOIN PUBLIC.GENRE g ON fg.GENRE_ID = g.GENRE_ID";
+
+        return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs));
     }
 
     @Override
