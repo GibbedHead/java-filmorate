@@ -157,6 +157,24 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), count);
     }
 
+    @Override
+    public void addLike(long filmId, long userId) {
+        String addLikeSql = "INSERT INTO PUBLIC.FILM_LIKES (FILM_ID, USER_ID) " +
+                "VALUES " +
+                "  (?, ?)";
+        jdbcTemplate.update(addLikeSql, filmId, userId);
+    }
+
+    @Override
+    public void deleteLike(long filmId, long userId) {
+        String addLikeSql = "DELETE FROM " +
+                "  PUBLIC.FILM_LIKES " +
+                "WHERE " +
+                "  FILM_ID = ? " +
+                "  AND USER_ID = ?";
+        jdbcTemplate.update(addLikeSql, filmId, userId);
+    }
+
     private Film makeFilm(ResultSet rs) throws SQLException {
         Film film = new Film(
                 rs.getLong("FILM_ID"),

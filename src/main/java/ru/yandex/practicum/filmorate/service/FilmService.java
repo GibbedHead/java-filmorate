@@ -54,15 +54,15 @@ public class FilmService {
     public void addLike(long filmId, long userId) throws FilmNotFoundException, UserNotFoundException {
         Film film = filmStorage.findById(filmId);
         User user = userStorage.findById(userId);
-        //film.getLikes().add(user.getId());
-        filmStorage.update(film);
+        filmStorage.addLike(filmId, userId);
+        log.info("Лайк фильма {} пользователем {} добавлен", filmId, userId);
     }
 
     public void deleteLike(long filmId, long userId) throws FilmNotFoundException, UserNotFoundException {
         Film film = filmStorage.findById(filmId);
         User user = userStorage.findById(userId);
-//        film.getLikes().remove(user.getId());
-        filmStorage.update(film);
+        filmStorage.deleteLike(filmId, userId);
+        log.info("Лайк фильма {} пользователем {} удален", filmId, userId);
     }
 
     public List<Film> getPopularFilms(int count) {

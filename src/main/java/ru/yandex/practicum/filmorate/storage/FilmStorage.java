@@ -17,4 +17,8 @@ public interface FilmStorage {
     Film findById(long id) throws FilmNotFoundException;
 
     List<Film> getPopular(int count);
+
+    void addLike(long filmId, long userId);
+
+    void deleteLike(long filmId, long userId);
 }

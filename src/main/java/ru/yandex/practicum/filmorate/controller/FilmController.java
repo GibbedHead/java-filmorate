@@ -59,16 +59,16 @@ public class FilmController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void addLike(@PathVariable long id, @PathVariable long userId)
             throws FilmNotFoundException, UserNotFoundException {
-        filmService.addLike(id, userId);
         log.info("Запрос лайка фильма {} пользователем {}", id, userId);
+        filmService.addLike(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteLike(@PathVariable long id, @PathVariable long userId)
             throws FilmNotFoundException, UserNotFoundException {
-        filmService.deleteLike(id, userId);
         log.info("Запрос удаления лайка фильма {} пользователем {}", id, userId);
+        filmService.deleteLike(id, userId);
     }
 
     @GetMapping("/popular")
