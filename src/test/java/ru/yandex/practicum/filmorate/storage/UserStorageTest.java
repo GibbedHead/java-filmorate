@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.jdbc.Sql;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@Sql(scripts = {"/schema.sql", "/data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class UserStorageTest {
     private final UserStorage userStorage;
     private final ObjectMapper objectMapper;
