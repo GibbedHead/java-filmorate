@@ -15,13 +15,17 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Component("FilmDbStorage")
 @AllArgsConstructor
 @Slf4j
 public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
+    private final GenreStorage genreStorage;
 
     @Override
     public long create(Film film) {
@@ -109,27 +113,20 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> findAll() {
-        String sql = "SELECT f.*, m.MPA_ID, m.MPA_NAME, g.GENRE_ID, g.GENRE_NAME " +
+        String sql = "SELECT f.*, m.MPA_ID, m.MPA_NAME " +
                 "FROM PUBLIC.FILM f " +
                 "LEFT JOIN PUBLIC.MPA m ON f.MPA_ID = m.MPA_ID " +
-                "LEFT JOIN PUBLIC.FILM_GENRE fg ON f.FILM_ID = fg.FILM_ID " +
-                "LEFT JOIN PUBLIC.GENRE g ON fg.GENRE_ID = g.GENRE_ID " +
-                "GROUP BY f.FILM_ID, g.GENRE_ID, g.GENRE_NAME, m.MPA_ID, m.MPA_NAME " +
-                "ORDER BY g.GENRE_ID ASC";
-
+                "GROUP BY f.FILM_ID, m.MPA_ID, m.MPA_NAME ";
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs));
     }
 
     @Override
     public Film findById(long id) throws FilmNotFoundException {
-        String sql = "SELECT f.*, m.MPA_ID, m.MPA_NAME, g.GENRE_ID, g.GENRE_NAME " +
+        String sql = "SELECT f.*, m.MPA_ID, m.MPA_NAME " +
                 "FROM PUBLIC.FILM f " +
                 "LEFT JOIN PUBLIC.MPA m ON f.MPA_ID = m.MPA_ID " +
-                "LEFT JOIN PUBLIC.FILM_GENRE fg ON f.FILM_ID = fg.FILM_ID " +
-                "LEFT JOIN PUBLIC.GENRE g ON fg.GENRE_ID = g.GENRE_ID " +
                 "WHERE f.FILM_ID = ? " +
-                "GROUP BY f.FILM_ID, g.GENRE_ID, g.GENRE_NAME, m.MPA_ID, m.MPA_NAME " +
-                "ORDER BY g.GENRE_ID ASC";
+                "GROUP BY f.FILM_ID, m.MPA_ID, m.MPA_NAME";
 
         List<Film> films = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), id);
         if (films.isEmpty()) {
@@ -191,16 +188,7 @@ public class FilmDbStorage implements FilmStorage {
         Mpa mpa = new Mpa(rs.getLong("MPA_ID"), rs.getString("MPA_NAME"));
         film.setMpa(mpa);
 
-        Set<Genre> genres = new HashSet<>();
-        long gi = rs.getLong("GENRE_ID");
-        String gn = rs.getString("GENRE_NAME");
-        if (rs.getLong("GENRE_ID") != 0) {
-            do {
-                Genre genre = new Genre(rs.getLong("GENRE_ID"), rs.getString("GENRE_NAME"));
-                genres.add(genre);
-            } while (rs.next());
-        }
-        film.setGenres(genres);
+        film.setGenres(genreStorage.findByFilmId(film.getId()));
 
         return film;
     }

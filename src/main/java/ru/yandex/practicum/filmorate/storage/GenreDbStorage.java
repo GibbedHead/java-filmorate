@@ -9,7 +9,11 @@ import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component("GenreDbStorage")
 @AllArgsConstructor
@@ -45,6 +49,24 @@ public class GenreDbStorage implements GenreStorage {
         } else {
             return userList.get(0);
         }
+    }
+
+    @Override
+    public Set<Genre> findByFilmId(long id) {
+        String sql = "" +
+                "SELECT " +
+                "  g.* " +
+                "FROM " +
+                "  GENRE g " +
+                "  LEFT JOIN FILM_GENRE fg ON fg.GENRE_ID = g.GENRE_ID " +
+                "  LEFT JOIN FILM f ON f.FILM_ID = fg.FILM_ID " +
+                "WHERE " +
+                "  f.FILM_ID = ? " +
+                "ORDER BY g.GENRE_ID ASC";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> makeGenre(rs), id)
+                .stream()
+                .sorted(Comparator.comparingLong(Genre::getId))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     private Genre makeGenre(ResultSet rs) throws SQLException {
