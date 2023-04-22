@@ -50,9 +50,9 @@ public class FilmController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Film delete(@PathVariable long id) throws FilmNotFoundException {
+    public void delete(@PathVariable long id) throws FilmNotFoundException {
         log.info("Запрос удаления фильма с id: {}", id);
-        return filmService.delete(id);
+        filmService.delete(id);
     }
 
     @PutMapping("/{id}/like/{userId}")

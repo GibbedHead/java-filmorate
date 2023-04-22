@@ -10,7 +10,7 @@ public interface FilmStorage {
 
     void update(Film film) throws FilmNotFoundException;
 
-    void delete(Film film);
+    void delete(long id);
 
     List<Film> findAll();
 

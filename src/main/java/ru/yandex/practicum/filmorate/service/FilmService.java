@@ -73,9 +73,9 @@ public class FilmService {
         return new ArrayList<>();
     }
 
-    public Film delete(long id) throws FilmNotFoundException {
-        Film film = filmStorage.findById(id);
-        filmStorage.delete(film);
-        return film;
+    public void delete(long id) throws FilmNotFoundException {
+        Film testFilmExist = filmStorage.findById(id);
+        filmStorage.delete(id);
+        log.info("Удален фильм id = {}", id);
     }
 }
