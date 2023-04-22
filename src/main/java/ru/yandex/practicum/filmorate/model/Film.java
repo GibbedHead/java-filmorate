@@ -31,4 +31,15 @@ public class Film {
     int duration;
     Set<Genre> genres;
     Mpa mpa;
+
+    public Film(long id, String name, String description, LocalDate releaseDate, int duration) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.releaseDate = releaseDate;
+        this.duration = duration;
+    }
+
+    public Film() {
+    }
 }

@@ -114,16 +114,13 @@ public class UserDbStorage implements UserStorage {
         );
 
         if (statuses.isEmpty()) {
-            // запрос на дружбу не существует, создаем новую запись
             String insertQuery = "INSERT INTO PUBLIC.FRIENDS (REQUESTER_ID, ACCEPTER_ID, STATUS) VALUES (?, ?, 'requested')";
             jdbcTemplate.update(insertQuery, user1Id, user2Id);
             log.info("Запрос дружбы {} и {} добавлен", user1Id, user2Id);
         } else if (statuses.get(0).equals("requested")) {
-            // запрос на дружбу уже есть и его отправил user1Id
             String updateQuery = "UPDATE PUBLIC.FRIENDS SET STATUS = 'accepted' WHERE REQUESTER_ID = ? AND ACCEPTER_ID = ?";
             jdbcTemplate.update(updateQuery, user1Id, user2Id);
 
-            // создаем запись в обратном порядке для user2Id, который подтвердил дружбу
             String insertQuery = "INSERT INTO PUBLIC.FRIENDS (REQUESTER_ID, ACCEPTER_ID, STATUS) VALUES (?, ?, 'accepted')";
             jdbcTemplate.update(insertQuery, user2Id, user1Id);
             log.info("Дружба {} и {} подтверждена", user1Id, user2Id);

@@ -9,13 +9,13 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 @Component("FilmDbStorage")
 @AllArgsConstructor
@@ -71,6 +71,43 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film findById(long id) throws FilmNotFoundException {
-        return null;
+        String sql = "SELECT f.*, m.MPA_ID, m.MPA_NAME, g.GENRE_ID, g.GENRE_NAME " +
+                "FROM PUBLIC.FILM f " +
+                "LEFT JOIN PUBLIC.MPA m ON f.MPA_ID = m.MPA_ID " +
+                "LEFT JOIN PUBLIC.FILM_GENRE fg ON f.FILM_ID = fg.FILM_ID " +
+                "LEFT JOIN PUBLIC.GENRE g ON fg.GENRE_ID = g.GENRE_ID " +
+                "WHERE f.FILM_ID = ?";
+
+        List<Film> films = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), id);
+        if (films.isEmpty()) {
+            log.info("Фильм id = {} не найден", id);
+            throw new FilmNotFoundException(String.format("Фильм id = %d не найден", id));
+        }
+        return films.get(0);
     }
+
+    private Film makeFilm(ResultSet rs) throws SQLException {
+        Film film = new Film(
+                rs.getLong("FILM_ID"),
+                rs.getString("NAME"),
+                rs.getString("DESCRIPTION"),
+                rs.getDate("RELEASE_DATE").toLocalDate(),
+                rs.getInt("DURATION")
+        );
+
+        Mpa mpa = new Mpa(rs.getLong("MPA_ID"), rs.getString("MPA_NAME"));
+        film.setMpa(mpa);
+
+        Set<Genre> genres = new HashSet<>();
+        if (rs.getLong("GENRE_ID") != 0) {
+            do {
+                Genre genre = new Genre(rs.getLong("GENRE_ID"), rs.getString("GENRE_NAME"));
+                genres.add(genre);
+            } while (rs.next());
+        }
+        film.setGenres(genres);
+
+        return film;
+    }
+
 }
