@@ -113,7 +113,9 @@ public class FilmDbStorage implements FilmStorage {
                 "FROM PUBLIC.FILM f " +
                 "LEFT JOIN PUBLIC.MPA m ON f.MPA_ID = m.MPA_ID " +
                 "LEFT JOIN PUBLIC.FILM_GENRE fg ON f.FILM_ID = fg.FILM_ID " +
-                "LEFT JOIN PUBLIC.GENRE g ON fg.GENRE_ID = g.GENRE_ID";
+                "LEFT JOIN PUBLIC.GENRE g ON fg.GENRE_ID = g.GENRE_ID " +
+                "GROUP BY f.FILM_ID, g.GENRE_ID, g.GENRE_NAME, m.MPA_ID, m.MPA_NAME " +
+                "ORDER BY g.GENRE_ID ASC";
 
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs));
     }
@@ -125,7 +127,9 @@ public class FilmDbStorage implements FilmStorage {
                 "LEFT JOIN PUBLIC.MPA m ON f.MPA_ID = m.MPA_ID " +
                 "LEFT JOIN PUBLIC.FILM_GENRE fg ON f.FILM_ID = fg.FILM_ID " +
                 "LEFT JOIN PUBLIC.GENRE g ON fg.GENRE_ID = g.GENRE_ID " +
-                "WHERE f.FILM_ID = ?";
+                "WHERE f.FILM_ID = ? " +
+                "GROUP BY f.FILM_ID, g.GENRE_ID, g.GENRE_NAME, m.MPA_ID, m.MPA_NAME " +
+                "ORDER BY g.GENRE_ID ASC";
 
         List<Film> films = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), id);
         if (films.isEmpty()) {
@@ -188,6 +192,8 @@ public class FilmDbStorage implements FilmStorage {
         film.setMpa(mpa);
 
         Set<Genre> genres = new HashSet<>();
+        long gi = rs.getLong("GENRE_ID");
+        String gn = rs.getString("GENRE_NAME");
         if (rs.getLong("GENRE_ID") != 0) {
             do {
                 Genre genre = new Genre(rs.getLong("GENRE_ID"), rs.getString("GENRE_NAME"));
