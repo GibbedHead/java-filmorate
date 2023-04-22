@@ -56,7 +56,44 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public void update(Film film) throws FilmNotFoundException {
+        String deleteGenreSql = "DELETE FROM " +
+                "  FILM_GENRE " +
+                "WHERE " +
+                "  FILM_ID = ?";
+        jdbcTemplate.update(deleteGenreSql, film.getId());
 
+        String updateFilmSql = "UPDATE " +
+                "  FILM " +
+                "SET " +
+                "  NAME = ?, " +
+                "  DESCRIPTION = ?, " +
+                "  RELEASE_DATE = ?, " +
+                "  DURATION = ?, " +
+                "  MPA_ID = ? " +
+                "WHERE " +
+                "  FILM_ID = ?";
+        jdbcTemplate.update(
+                updateFilmSql,
+                film.getName(),
+                film.getDescription(),
+                Date.valueOf(film.getReleaseDate()),
+                film.getDuration(),
+                film.getMpa().getId(),
+                film.getId()
+        );
+        insertFilmGenres(film.getId(), film.getGenres());
+    }
+
+    private void insertFilmGenres(long filmId, Set<Genre> genres) {
+        if (genres != null) {
+            for (Genre genre : genres) {
+                jdbcTemplate.update(
+                        "INSERT INTO FILM_GENRE (FILM_ID, GENRE_ID) VALUES (?, ?)",
+                        filmId,
+                        genre.getId()
+                );
+            }
+        }
     }
 
     @Override

@@ -48,8 +48,11 @@ public class FilmService {
     }
 
     public Film update(Film film) throws FilmNotFoundException {
+        Film sourceFilm = filmStorage.findById(film.getId());
         filmStorage.update(film);
-        return film;
+        Film updatedFilm = filmStorage.findById(film.getId());
+        log.info("Обновлен фильм c {} на {}", sourceFilm, updatedFilm);
+        return updatedFilm;
     }
 
     public void addLike(long filmId, long userId) throws FilmNotFoundException, UserNotFoundException {
