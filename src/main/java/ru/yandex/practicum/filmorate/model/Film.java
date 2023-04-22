@@ -29,6 +29,6 @@ public class Film {
     LocalDate releaseDate;
     @Positive
     int duration;
-    Set<Genre> genre;
+    Set<Genre> genres;
     Mpa mpa;
 }

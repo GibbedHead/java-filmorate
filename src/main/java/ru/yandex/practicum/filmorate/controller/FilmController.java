@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
@@ -20,56 +21,63 @@ public class FilmController {
     private final FilmService filmService;
 
     @PostMapping
-    public Film add(@Valid @RequestBody Film film) {
-        filmService.create(film);
-        log.info("Добавлен фильм: {}", film);
-        return film;
+    @ResponseStatus(HttpStatus.CREATED)
+    public Film add(@Valid @RequestBody Film film) throws FilmNotFoundException {
+        log.info("Запрос создания фильма: {}", film);
+        return filmService.create(film);
     }
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public List<Film> findAll() {
-        log.info("Показываем все фильмы");
+        log.info("Запрос всех фильмы");
         return filmService.findAll();
     }
 
     @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public Film findById(@PathVariable long id) throws FilmNotFoundException {
-        log.info("Показываем фильм {}", id);
+        log.info("Запрос фильма {}", id);
         return filmService.findById(id);
     }
 
     @PutMapping
+    @ResponseStatus(HttpStatus.OK)
     public Film update(@Valid @RequestBody Film film) throws FilmNotFoundException {
 
-        log.info("Обновлен фильм: {}", film);
+        log.info("Запрос обновления фильма: {}", film);
         return filmService.update(film);
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public Film delete(@PathVariable long id) throws FilmNotFoundException {
-        log.info("Удален фильм с id: {}", id);
+        log.info("Запрос удаления фильма с id: {}", id);
         return filmService.delete(id);
     }
 
     @PutMapping("/{id}/like/{userId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void addLike(@PathVariable long id, @PathVariable long userId)
             throws FilmNotFoundException, UserNotFoundException {
         filmService.addLike(id, userId);
-        log.info("Фильм {} лайкнут пользователем {}", id, userId);
+        log.info("Запрос лайка фильма {} пользователем {}", id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteLike(@PathVariable long id, @PathVariable long userId)
             throws FilmNotFoundException, UserNotFoundException {
         filmService.deleteLike(id, userId);
-        log.info("Фильм {} разлайкнут пользователем {}", id, userId);
+        log.info("Запрос удаления лайка фильма {} пользователем {}", id, userId);
     }
 
     @GetMapping("/popular")
+    @ResponseStatus(HttpStatus.OK)
     public List<Film> getTopLikedFilms(
             @RequestParam(name = "count", defaultValue = "10", required = false) Long count
     ) {
-        log.info("Показываем {} самых популярных фильмов", count);
+        log.info("Запрос {} самых популярных фильмов", count);
         return filmService.getTopLikedFilms(count);
     }
 }

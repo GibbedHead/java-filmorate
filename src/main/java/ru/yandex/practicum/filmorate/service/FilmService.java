@@ -1,20 +1,24 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.Comparator;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class FilmService {
     @Autowired
     @Qualifier("FilmDbStorage")
@@ -28,8 +32,11 @@ public class FilmService {
         this.userStorage = userStorage;
     }
 
-    public void create(Film film) {
-        filmStorage.create(film);
+    public Film create(Film film) throws FilmNotFoundException {
+        long id = filmStorage.create(film);
+        Film addedFilm = filmStorage.findById(id);
+        log.info("Добавлен фильм: {}", addedFilm);
+        return addedFilm;
     }
 
     public List<Film> findAll() {
@@ -48,26 +55,19 @@ public class FilmService {
     public void addLike(long filmId, long userId) throws FilmNotFoundException, UserNotFoundException {
         Film film = filmStorage.findById(filmId);
         User user = userStorage.findById(userId);
-        film.getLikes().add(user.getId());
+        //film.getLikes().add(user.getId());
         filmStorage.update(film);
     }
 
     public void deleteLike(long filmId, long userId) throws FilmNotFoundException, UserNotFoundException {
         Film film = filmStorage.findById(filmId);
         User user = userStorage.findById(userId);
-        film.getLikes().remove(user.getId());
+//        film.getLikes().remove(user.getId());
         filmStorage.update(film);
     }
 
     public List<Film> getTopLikedFilms(long count) {
-        return filmStorage.findAll().stream()
-                .sorted(
-                        Comparator.comparingInt(
-                                (Film f) -> f.getLikes().size()
-                        ).reversed()
-                )
-                .limit(count)
-                .collect(Collectors.toList());
+        return new ArrayList<>();
     }
 
     public Film delete(long id) throws FilmNotFoundException {
