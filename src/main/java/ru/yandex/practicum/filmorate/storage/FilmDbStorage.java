@@ -135,6 +135,28 @@ public class FilmDbStorage implements FilmStorage {
         return films.get(0);
     }
 
+    @Override
+    public List<Film> getPopular(int count) {
+        String sql = "" +
+                "SELECT " +
+                "  f.*, " +
+                "  m.*, " +
+                "  g.*, " +
+                "  COUNT(fl.USER_ID) as likes_count " +
+                "FROM " +
+                "  FILM f " +
+                "  LEFT JOIN FILM_LIKES fl ON f.FILM_ID = fl.FILM_ID " +
+                "  LEFT JOIN MPA m ON f.MPA_ID = m.MPA_ID " +
+                "  LEFT JOIN PUBLIC.FILM_GENRE fg ON f.FILM_ID = fg.FILM_ID " +
+                "  LEFT JOIN PUBLIC.GENRE g ON fg.GENRE_ID = g.GENRE_ID " +
+                "GROUP BY " +
+                "  f.FILM_ID " +
+                "ORDER BY " +
+                "  likes_count DESC " +
+                "LIMIT ?";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), count);
+    }
+
     private Film makeFilm(ResultSet rs) throws SQLException {
         Film film = new Film(
                 rs.getLong("FILM_ID"),

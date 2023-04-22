@@ -7,14 +7,10 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -69,8 +65,8 @@ public class FilmService {
         filmStorage.update(film);
     }
 
-    public List<Film> getTopLikedFilms(long count) {
-        return new ArrayList<>();
+    public List<Film> getPopularFilms(int count) {
+        return filmStorage.getPopular(count);
     }
 
     public void delete(long id) throws FilmNotFoundException {

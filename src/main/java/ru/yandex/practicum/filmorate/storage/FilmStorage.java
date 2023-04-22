@@ -15,4 +15,6 @@ public interface FilmStorage {
     List<Film> findAll();
 
     Film findById(long id) throws FilmNotFoundException;
+
+    List<Film> getPopular(int count);
 }
