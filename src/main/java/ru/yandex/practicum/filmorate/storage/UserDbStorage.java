@@ -96,7 +96,6 @@ public class UserDbStorage implements UserStorage {
                 "  1";
         List<User> userList = jdbcTemplate.query(sql, (rs, rowNum) -> makeUser(rs), id);
         if (userList.isEmpty()) {
-            log.info("Пользователь id = {} не найден", id);
             throw new UserNotFoundException(String.format("Пользователь id = %d не найден", id));
         } else {
             return userList.get(0);
@@ -105,7 +104,6 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public void createOrConfirmFriendship(long user1Id, long user2Id) {
-        // проверяем, есть ли уже запрос на дружбу между пользователями
         String query = "SELECT STATUS FROM PUBLIC.FRIENDS WHERE REQUESTER_ID = ? AND ACCEPTER_ID = ?";
         List<String> statuses = jdbcTemplate.query(
                 query,
@@ -116,14 +114,12 @@ public class UserDbStorage implements UserStorage {
         if (statuses.isEmpty()) {
             String insertQuery = "INSERT INTO PUBLIC.FRIENDS (REQUESTER_ID, ACCEPTER_ID, STATUS) VALUES (?, ?, 'requested')";
             jdbcTemplate.update(insertQuery, user1Id, user2Id);
-            log.info("Запрос дружбы {} и {} добавлен", user1Id, user2Id);
         } else if (statuses.get(0).equals("requested")) {
             String updateQuery = "UPDATE PUBLIC.FRIENDS SET STATUS = 'accepted' WHERE REQUESTER_ID = ? AND ACCEPTER_ID = ?";
             jdbcTemplate.update(updateQuery, user1Id, user2Id);
 
             String insertQuery = "INSERT INTO PUBLIC.FRIENDS (REQUESTER_ID, ACCEPTER_ID, STATUS) VALUES (?, ?, 'accepted')";
             jdbcTemplate.update(insertQuery, user2Id, user1Id);
-            log.info("Дружба {} и {} подтверждена", user1Id, user2Id);
         }
     }
 

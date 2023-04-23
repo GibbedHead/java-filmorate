@@ -40,7 +40,6 @@ public class MpaDbStorage implements MpaStorage {
                 "  1";
         List<Mpa> mpaList = jdbcTemplate.query(sql, (rs, rowNum) -> makeMpa(rs), id);
         if (mpaList.isEmpty()) {
-            log.info("Mpa id = {} не найден", id);
             throw new MpaNotFoundException(String.format("Mpa id = %d не найден", id));
         } else {
             return mpaList.get(0);

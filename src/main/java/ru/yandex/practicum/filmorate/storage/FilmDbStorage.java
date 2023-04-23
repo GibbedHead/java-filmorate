@@ -130,7 +130,6 @@ public class FilmDbStorage implements FilmStorage {
 
         List<Film> films = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), id);
         if (films.isEmpty()) {
-            log.info("Фильм id = {} не найден", id);
             throw new FilmNotFoundException(String.format("Фильм id = %d не найден", id));
         }
         return films.get(0);

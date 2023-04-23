@@ -44,7 +44,6 @@ public class GenreDbStorage implements GenreStorage {
                 "  1";
         List<Genre> userList = jdbcTemplate.query(sql, (rs, rowNum) -> makeGenre(rs), id);
         if (userList.isEmpty()) {
-            log.info("Жанр id = {} не найден", id);
             throw new GenreNotFoundException(String.format("Жанр id = %d не найден", id));
         } else {
             return userList.get(0);
