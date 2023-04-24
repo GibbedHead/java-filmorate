@@ -25,6 +25,7 @@ class FilmorateApplicationTests {
 				"Test desc",
 				LocalDate.of(1800, 1, 1),
 				90,
+				null,
 				null
 		);
 		Set<ConstraintViolation<Film>> violations = validator.validate(film);
@@ -39,6 +40,7 @@ class FilmorateApplicationTests {
 				"Test desc",
 				LocalDate.of(1990, 1, 1),
 				90,
+				null,
 				null
 		);
 		Set<ConstraintViolation<Film>> violations = validator.validate(film);

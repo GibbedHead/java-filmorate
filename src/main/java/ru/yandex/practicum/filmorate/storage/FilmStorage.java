@@ -6,13 +6,19 @@ import ru.yandex.practicum.filmorate.model.Film;
 import java.util.List;
 
 public interface FilmStorage {
-    void create(Film film);
+    long create(Film film);
 
     void update(Film film) throws FilmNotFoundException;
 
-    void delete(Film film);
+    void delete(long id);
 
     List<Film> findAll();
 
     Film findById(long id) throws FilmNotFoundException;
+
+    List<Film> getPopular(int count);
+
+    void addLike(long filmId, long userId);
+
+    void deleteLike(long filmId, long userId);
 }
