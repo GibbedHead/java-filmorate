@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exception.ReviewNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.service.ReviewService;
@@ -22,32 +23,28 @@ public class ReviewController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Review add(@Valid @RequestBody Review review) {
-            //throws FilmNotFoundException {
+    public Review add(@Valid @RequestBody Review review) throws ReviewNotFoundException {
         log.info("Запрос создания отзыва: {}", review);
         return reviewService.create(review);
     }
 
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
-    public Review update(@Valid @RequestBody Review review) {
-             //throws FilmNotFoundException {
+    public Review update(@Valid @RequestBody Review review) throws ReviewNotFoundException {
         log.info("Запрос обновления отзыва: {}", review);
         return reviewService.update(review);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable long id) {
-            //throws FilmNotFoundException {
+    public void delete(@PathVariable long id) throws ReviewNotFoundException {
         log.info("Запрос удаления отзыва с id: {}", id);
         reviewService.delete(id);
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Review findById(@PathVariable long id) {
-            //throws FilmNotFoundException {
+    public Review findById(@PathVariable long id) throws ReviewNotFoundException {
         log.info("Запрос отзыва с id: {}", id);
         return reviewService.findById(id);
     }
