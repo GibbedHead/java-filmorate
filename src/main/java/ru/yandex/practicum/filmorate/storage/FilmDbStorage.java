@@ -172,6 +172,11 @@ public class FilmDbStorage implements FilmStorage {
         jdbcTemplate.update(addLikeSql, filmId, userId);
     }
 
+    @Override
+    public List<Film> getCommon(long userId, long friendId) {
+        return null;
+    }
+
     private Film makeFilm(ResultSet rs) throws SQLException {
         Film film = new Film(
                 rs.getLong("FILM_ID"),

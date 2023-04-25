@@ -79,4 +79,14 @@ public class FilmController {
         log.info("Запрос {} самых популярных фильмов", count);
         return filmService.getPopularFilms(count);
     }
+
+    @GetMapping("/common")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Film> getCommon(
+            @RequestParam(name = "userId") Long userId,
+            @RequestParam(name = "friendId") Long friendId
+    ) {
+        log.info("Запрос общих фильмов пользователей {} и {}", userId, friendId);
+        return filmService.getCommon(userId, friendId);
+    }
 }
