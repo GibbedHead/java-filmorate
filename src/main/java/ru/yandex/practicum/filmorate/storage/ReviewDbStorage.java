@@ -3,13 +3,17 @@ package ru.yandex.practicum.filmorate.storage;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ReviewNotFoundException;
 import ru.yandex.practicum.filmorate.model.Review;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 @AllArgsConstructor
@@ -20,12 +24,39 @@ public class ReviewDbStorage implements ReviewStorage {
 
     @Override
     public long create(Review review) {
-        return 0;
+        String reviewSql = "INSERT INTO PUBLIC.REVIEWS(CONTENT, IS_POSITIVE, USER_ID, FILM_ID) " +
+                "VALUES (?,?,?,?)";
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement stmt = connection.prepareStatement(reviewSql, new String[]{"REVIEW_ID"});
+            stmt.setString(1, review.getContent());
+            stmt.setBoolean(2, review.isPositive());
+            stmt.setLong(3, review.getUserId());
+            stmt.setLong(4, review.getFilmId());
+            return stmt;
+        }, keyHolder);
+        return Objects.requireNonNull(keyHolder.getKey()).longValue();
     }
 
     @Override
-    public Review update(Review review) {
-        return null;
+    public void update(Review review) {
+        String updateReviewSql = "UPDATE " +
+                "  PUBLIC.REVIEWS " +
+                "SET " +
+                "  CONTENT = ?, " +
+                "  IS_POSITIVE = ?, " +
+                "  USER_ID = ?, " +
+                "  FILM_ID = ? " +
+                "WHERE " +
+                "  REVIEW_ID = ?";
+        jdbcTemplate.update(
+                updateReviewSql,
+                review.getContent(),
+                review.isPositive(),
+                review.getUserId(),
+                review.getFilmId(),
+                review.getId()
+        );
     }
 
     @Override
