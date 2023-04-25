@@ -4,9 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ReviewNotFoundException;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.service.ReviewService;
 
@@ -51,7 +49,7 @@ public class ReviewController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<Review> findAllByFilmId(@RequestParam (name = "filmId", required = true) Long filmId,
+    public List<Review> findAllByFilmId(@RequestParam (name = "filmId", required = false) Long filmId,
             @RequestParam(name = "count", defaultValue = "10", required = false) Integer count) {
         log.info("Запрос {} отзывов фильма с id {} ", count, filmId);
         return reviewService.findAllByFilmId(filmId, count);
