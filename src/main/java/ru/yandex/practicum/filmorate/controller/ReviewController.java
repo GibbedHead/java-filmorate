@@ -49,11 +49,11 @@ public class ReviewController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<Review> findAllByFilmId(@RequestParam (name = "filmId", required = false) Long filmId,
+    public List<Review> findAllByFilmId(@RequestParam (name = "filmId", defaultValue = "0", required = false) Long filmId,
             @RequestParam(name = "count", defaultValue = "10", required = false) Integer count) {
         log.info("Запрос {} отзывов фильма с id {} ", count, filmId);
         return reviewService.findAllByFilmId(filmId, count);
-    } // тут подумать над тем, что если не указан id фильма - запрос выдает все фильмы
+    } // тут подумать над тем, что если не указан id фильма - запрос выдает все отзывы
 
     // + добавить эндпоинты для добавления like/dislike на отзыв!!!
 
