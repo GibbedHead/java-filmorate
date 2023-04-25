@@ -9,7 +9,7 @@ public interface ReviewStorage {
 
     long create(Review review);
 
-    Review update(Review review);
+    void update(Review review);
 
     void delete(long id);
 
