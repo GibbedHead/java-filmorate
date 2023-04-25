@@ -174,7 +174,32 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> getCommon(long userId, long friendId) {
-        return null;
+        String sql = "" +
+                "SELECT " +
+                "  DISTINCT f.*, " +
+                "  m.*, " +
+                "FROM " +
+                "  FILM_LIKES fl " +
+                "  LEFT JOIN FILM f ON f.FILM_ID = fl.FILM_ID " +
+                "  LEFT JOIN MPA m ON f.MPA_ID = m.MPA_ID " +
+                "WHERE " +
+                "  fl.FILM_ID IN (" +
+                "    SELECT " +
+                "      fl2.FILM_ID " +
+                "    FROM " +
+                "      FILM_LIKES fl2 " +
+                "    WHERE " +
+                "      FL2.USER_ID = ?" +
+                "  ) " +
+                "  AND fl.FILM_ID IN (" +
+                "    SELECT " +
+                "      fl2.FILM_ID " +
+                "    FROM " +
+                "      FILM_LIKES fl2 " +
+                "    WHERE " +
+                "      FL2.USER_ID = ?" +
+                "  )";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), userId, friendId);
     }
 
     private Film makeFilm(ResultSet rs) throws SQLException {

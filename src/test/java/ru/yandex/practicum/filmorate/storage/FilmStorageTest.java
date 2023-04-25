@@ -99,6 +99,16 @@ class FilmStorageTest {
                 filmStorage.getPopular(10).get(0).getId());
     }
 
+    @Test
+    void commonFilms() {
+        assertEquals(2, filmStorage.getCommon(1, 2).size());
+        filmStorage.deleteLike(1, 1);
+        assertEquals(1, filmStorage.getCommon(1, 2).size());
+        filmStorage.addLike(4, 2);
+        filmStorage.addLike(3, 1);
+        assertEquals(3, filmStorage.getCommon(1, 2).size());
+    }
+
     private Film getFilmFromJson() throws JsonProcessingException {
         String filmJson = "{\n" +
                 "  \"name\": \"New film\",\n" +
