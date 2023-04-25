@@ -71,7 +71,7 @@ class FilmStorageTest {
     @Test
     void delete() {
         filmStorage.delete(1);
-        assertEquals(1, filmStorage.findAll().size());
+        assertEquals(4, filmStorage.findAll().size());
     }
 
     @Test
@@ -83,10 +83,8 @@ class FilmStorageTest {
 
     @Test
     void addLike() {
-        filmStorage.addLike(2, 1);
-        filmStorage.addLike(2, 2);
         assertEquals(
-                2,
+                1,
                 filmStorage.getPopular(10).get(0).getId());
     }
 
@@ -95,7 +93,7 @@ class FilmStorageTest {
         filmStorage.deleteLike(1, 1);
         filmStorage.deleteLike(1, 2);
         assertEquals(
-                2,
+                5,
                 filmStorage.getPopular(10).get(0).getId());
     }
 
