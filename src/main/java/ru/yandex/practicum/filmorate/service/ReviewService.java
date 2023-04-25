@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.ReviewNotFoundException;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.ReviewStorage;
 
@@ -15,16 +16,14 @@ public class ReviewService {
 
     private final ReviewStorage reviewStorage;
 
-    public Review create(Review review) {
-        //throws FilmNotFoundException {
+    public Review create(Review review) throws ReviewNotFoundException {
         long id = reviewStorage.create(review);
         Review addedReview = reviewStorage.findById(id);
         log.info("Добавлен отзыв: {}", addedReview);
         return addedReview;
     }
 
-    public Review update(Review review) {
-        // throws FilmNotFoundException {
+    public Review update(Review review) throws ReviewNotFoundException {
         Review sourceReview = reviewStorage.findById(review.getId());
         reviewStorage.update(review);
         Review updatedReview = reviewStorage.findById(review.getId());
@@ -32,15 +31,13 @@ public class ReviewService {
         return updatedReview;
     }
 
-    public void delete(long id) {
-        // throws FilmNotFoundException {
+    public void delete(long id) throws ReviewNotFoundException {
         Review testReviewExist = reviewStorage.findById(id);
         reviewStorage.delete(id);
         log.info("Удален отзыв с id = {}", id);
     }
 
-    public Review findById(long id) {
-        //throws FilmNotFoundException {
+    public Review findById(long id) throws ReviewNotFoundException {
         return reviewStorage.findById(id);
     }
 
