@@ -85,6 +85,13 @@ public class ReviewDbStorage implements ReviewStorage {
 
     @Override
     public List<Review> findAllByFilmId(long filmId, int count) {
+        if (filmId == 0) {
+            String sql = "" +
+                    "SELECT * " +
+                    "FROM PUBLIC.REVIEWS " +
+                    "LIMIT ?";
+            return jdbcTemplate.query(sql, (rs, rowNum) -> makeReview(rs), count);
+        }
         String sql = "" +
                 "SELECT * " +
                 "FROM PUBLIC.REVIEWS " +
