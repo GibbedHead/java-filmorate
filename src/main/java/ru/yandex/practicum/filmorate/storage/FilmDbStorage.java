@@ -178,6 +178,7 @@ public class FilmDbStorage implements FilmStorage {
                 "SELECT " +
                 "  DISTINCT f.*, " +
                 "  m.*, " +
+                "  COUNT(fl.USER_ID) as likes_count " +
                 "FROM " +
                 "  FILM_LIKES fl " +
                 "  LEFT JOIN FILM f ON f.FILM_ID = fl.FILM_ID " +
@@ -198,7 +199,11 @@ public class FilmDbStorage implements FilmStorage {
                 "      FILM_LIKES fl2 " +
                 "    WHERE " +
                 "      FL2.USER_ID = ?" +
-                "  )";
+                "  )" +
+                "GROUP BY " +
+                "  f.FILM_ID " +
+                "ORDER BY " +
+                "  likes_count DESC ";
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), userId, friendId);
     }
 
