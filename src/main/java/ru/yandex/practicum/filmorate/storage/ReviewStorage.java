@@ -7,13 +7,16 @@ import java.util.List;
 
 public interface ReviewStorage {
 
-    long create(Review review);
+    long create(Review review) throws ReviewNotFoundException;
 
-    void update(Review review);
+    void update(Review review) throws ReviewNotFoundException;
 
     void delete(long id);
 
     Review findById(long id) throws ReviewNotFoundException;
 
     List<Review> findAllByFilmId(long filmId, int count);
+    void addLike(long reviewId, long userId);
+    void addDislike(long reviewId, long userId);
+    void deleteLikeOrDislike(long reviewId, long userId);
 }

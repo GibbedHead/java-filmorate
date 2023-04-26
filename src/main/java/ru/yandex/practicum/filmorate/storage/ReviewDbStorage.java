@@ -46,7 +46,8 @@ public class ReviewDbStorage implements ReviewStorage {
                 "  CONTENT = ?, " +
                 "  IS_POSITIVE = ?, " +
                 "  USER_ID = ?, " +
-                "  FILM_ID = ? " +
+                "  FILM_ID = ?, " +
+                " USEFUL = ? " +
                 "WHERE " +
                 "  REVIEW_ID = ?";
         jdbcTemplate.update(
@@ -55,6 +56,7 @@ public class ReviewDbStorage implements ReviewStorage {
                 review.isPositive(),
                 review.getUserId(),
                 review.getFilmId(),
+                getUseful(review.getId()),
                 review.getId()
         );
     }
@@ -100,16 +102,56 @@ public class ReviewDbStorage implements ReviewStorage {
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeReview(rs), filmId, count);
     }
 
+    @Override
+    public void addLike(long reviewId, long userId) {
+        String addLikeSql = "INSERT INTO PUBLIC.REVIEW_REACTIONS (REVIEW_ID, USER_ID, REACTION) " +
+                "VALUES " +
+                "  (?, ?, ?)";
+        jdbcTemplate.update(addLikeSql, reviewId, userId, 1);
+    }
+
+    @Override
+    public void addDislike(long reviewId, long userId) {
+        String addLikeSql = "INSERT INTO PUBLIC.REVIEW_REACTIONS (REVIEW_ID, USER_ID, REACTION) " +
+                "VALUES " +
+                "  (?, ?, ?)";
+        jdbcTemplate.update(addLikeSql, reviewId, userId, -1);
+    }
+
+    @Override
+    public void deleteLikeOrDislike(long reviewId, long userId) {
+        String addLikeSql = "DELETE FROM " +
+                "  PUBLIC.REVIEW_REACTIONS " +
+                "WHERE " +
+                "  REVIEW_ID = ? " +
+                "  AND USER_ID = ?";
+        jdbcTemplate.update(addLikeSql, reviewId, userId);
+    }
+
     private Review makeReview(ResultSet rs) throws SQLException {
 
-        return new Review(
+        return new  Review(
                 rs.getLong("REVIEW_ID"),
                 rs.getString("CONTENT"),
                 rs.getBoolean("IS_POSITIVE"),
                 rs.getLong("USER_ID"),
                 rs.getLong("FILM_ID"),
-                rs.getInt("USEFUL")
+                getUseful(rs.getLong("REVIEW_ID"))
         );
+    }
+
+    private int getUseful(long reviewId) {
+
+        String sql = "SELECT SUM(REACTION) " +
+                "FROM PUBLIC.REVIEW_REACTIONS " +
+                "WHERE REVIEW_ID = ? " +
+                "GROUP BY REVIEW_ID";
+
+        List<Integer> useful = jdbcTemplate.query(sql, (rs, rowNum) -> rs.getInt("SUM(REACTION)"), reviewId);
+        if (useful.isEmpty()) {
+            return 0;
+        }
+        return useful.get(0);
     }
 
 }
