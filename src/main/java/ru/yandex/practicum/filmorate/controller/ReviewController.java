@@ -58,35 +58,35 @@ public class ReviewController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void addLike(@PathVariable long id, @PathVariable long userId)
+    @ResponseStatus(HttpStatus.OK)
+    public Review addLike(@PathVariable long id, @PathVariable long userId)
             throws ReviewNotFoundException, UserNotFoundException {
         log.info("Запрос лайка отзыва {} пользователем {}", id, userId);
-        reviewService.addLike(id, userId);
+        return reviewService.addLike(id, userId);
     }
 
     @PutMapping("/{id}/dislike/{userId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void addDislike(@PathVariable long id, @PathVariable long userId)
+    @ResponseStatus(HttpStatus.OK)
+    public Review addDislike(@PathVariable long id, @PathVariable long userId)
             throws ReviewNotFoundException, UserNotFoundException {
         log.info("Запрос дизлайка отзыва {} пользователем {}", id, userId);
-        reviewService.addDislike(id, userId);
+        return reviewService.addDislike(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteLike(@PathVariable long id, @PathVariable long userId)
+    @ResponseStatus(HttpStatus.OK)
+    public Review deleteLike(@PathVariable long id, @PathVariable long userId)
             throws ReviewNotFoundException, UserNotFoundException {
         log.info("Запрос удаления лайка отзыва {} пользователем {}", id, userId);
-        reviewService.deleteLike(id, userId);
+        return reviewService.deleteLike(id, userId);
     }
 
     @DeleteMapping("/{id}/dislike/{userId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteDislike(@PathVariable long id, @PathVariable long userId)
+    @ResponseStatus(HttpStatus.OK)
+    public Review deleteDislike(@PathVariable long id, @PathVariable long userId)
             throws ReviewNotFoundException, UserNotFoundException {
         log.info("Запрос удаления дизлайка отзыва {} пользователем {}", id, userId);
-        reviewService.deleteDislike(id, userId);
+        return reviewService.deleteDislike(id, userId);
     }
 
 }
