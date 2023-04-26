@@ -59,32 +59,36 @@ public class ReviewService {
         return reviewStorage.findAllByFilmId(filmId, count);
     }
 
-    public void addLike(long reviewId, long userId) throws ReviewNotFoundException, UserNotFoundException {
+    public Review addLike(long reviewId, long userId) throws ReviewNotFoundException, UserNotFoundException {
         Review review = reviewStorage.findById(reviewId);
         User user = userStorage.findById(userId);
         reviewStorage.addLike(reviewId, userId);
         log.info("Лайк отзыва {} пользователем {} добавлен", reviewId, userId);
+        return reviewStorage.findById(reviewId);
     }
 
-    public void addDislike(long reviewId, long userId) throws ReviewNotFoundException, UserNotFoundException {
+    public Review addDislike(long reviewId, long userId) throws ReviewNotFoundException, UserNotFoundException {
         Review review = reviewStorage.findById(reviewId);
         User user = userStorage.findById(userId);
         reviewStorage.addLike(reviewId, userId);
         log.info("Дизлайк отзыва {} пользователем {} добавлен", reviewId, userId);
+        return reviewStorage.findById(reviewId);
     }
 
-    public void deleteLike(long reviewId, long userId) throws ReviewNotFoundException, UserNotFoundException {
+    public Review deleteLike(long reviewId, long userId) throws ReviewNotFoundException, UserNotFoundException {
         Review review = reviewStorage.findById(reviewId);
         User user = userStorage.findById(userId);
         reviewStorage.deleteLike(reviewId, userId);
         log.info("Лайк отзыва {} пользователем {} удален", reviewId, userId);
+        return reviewStorage.findById(reviewId);
     }
 
-    public void deleteDislike(long reviewId, long userId) throws ReviewNotFoundException, UserNotFoundException {
+    public Review deleteDislike(long reviewId, long userId) throws ReviewNotFoundException, UserNotFoundException {
         Review review = reviewStorage.findById(reviewId);
         User user = userStorage.findById(userId);
         reviewStorage.deleteDislike(reviewId, userId);
         log.info("Дизлайк отзыва {} пользователем {} удален", reviewId, userId);
+        return reviewStorage.findById(reviewId);
     }
 
 }
