@@ -32,9 +32,9 @@ public class ReviewService {
     }
 
     public Review update(Review review) throws ReviewNotFoundException {
-        Review sourceReview = reviewStorage.findById(review.getId());
+        Review sourceReview = reviewStorage.findById(review.getReviewId());
         reviewStorage.update(review);
-        Review updatedReview = reviewStorage.findById(review.getId());
+        Review updatedReview = reviewStorage.findById(review.getReviewId());
         log.info("Обновлен отзыв {} на {}", sourceReview, updatedReview);
         return updatedReview;
     }

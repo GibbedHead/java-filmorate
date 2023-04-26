@@ -56,8 +56,8 @@ public class ReviewDbStorage implements ReviewStorage {
                 review.isPositive(),
                 review.getUserId(),
                 review.getFilmId(),
-                getUseful(review.getId()),
-                review.getId()
+                getUseful(review.getReviewId()),
+                review.getReviewId()
         );
     }
 
