@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ReviewNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Review;
@@ -22,7 +23,7 @@ public class ReviewController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Review add(@Valid @RequestBody Review review) throws ReviewNotFoundException {
+    public Review add(@Valid @RequestBody Review review) throws ReviewNotFoundException, UserNotFoundException, FilmNotFoundException {
         log.info("Запрос создания отзыва: {}", review);
         return reviewService.create(review);
     }

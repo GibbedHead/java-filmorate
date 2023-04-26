@@ -3,12 +3,14 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ReviewNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.ReviewStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
@@ -21,10 +23,14 @@ public class ReviewService {
 
     private final ReviewStorage reviewStorage;
     @Autowired
-    @Qualifier("UserDbStorage")
     private final UserStorage userStorage;
+    @Autowired
+    private final FilmStorage filmStorage;
 
-    public Review create(Review review) throws ReviewNotFoundException {
+    public Review create(Review review) throws ReviewNotFoundException, UserNotFoundException, FilmNotFoundException {
+        // тут проверить, что такой юзер и фильм существуют
+        User testUserExist = userStorage.findById(review.getUserId());
+        Film testFilmExist = filmStorage.findById(review.getFilmId());
         long id = reviewStorage.create(review);
         Review addedReview = reviewStorage.findById(id);
         log.info("Добавлен отзыв: {}", addedReview);
