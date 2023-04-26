@@ -70,14 +70,14 @@ public class ReviewService {
     public void deleteLike(long reviewId, long userId) throws ReviewNotFoundException, UserNotFoundException {
         Review review = reviewStorage.findById(reviewId);
         User user = userStorage.findById(userId);
-        reviewStorage.deleteLikeOrDislike(reviewId, userId);
+        reviewStorage.deleteLike(reviewId, userId);
         log.info("Лайк отзыва {} пользователем {} удален", reviewId, userId);
     }
 
     public void deleteDislike(long reviewId, long userId) throws ReviewNotFoundException, UserNotFoundException {
         Review review = reviewStorage.findById(reviewId);
         User user = userStorage.findById(userId);
-        reviewStorage.deleteLikeOrDislike(reviewId, userId);
+        reviewStorage.deleteDislike(reviewId, userId);
         log.info("Дизлайк отзыва {} пользователем {} удален", reviewId, userId);
     }
 
