@@ -45,8 +45,6 @@ public class ReviewDbStorage implements ReviewStorage {
                 "SET " +
                 "  CONTENT = ?, " +
                 "  IS_POSITIVE = ?, " +
-                "  USER_ID = ?, " +
-                "  FILM_ID = ?, " +
                 " USEFUL = ? " +
                 "WHERE " +
                 "  REVIEW_ID = ?";
@@ -54,8 +52,6 @@ public class ReviewDbStorage implements ReviewStorage {
                 updateReviewSql,
                 review.getContent(),
                 review.getIsPositive(),
-                review.getUserId(),
-                review.getFilmId(),
                 getUseful(review.getReviewId()),
                 review.getReviewId()
         );
@@ -142,7 +138,7 @@ public class ReviewDbStorage implements ReviewStorage {
 
     private Review makeReview(ResultSet rs) throws SQLException {
 
-        return new  Review(
+        return new Review(
                 rs.getLong("REVIEW_ID"),
                 rs.getString("CONTENT"),
                 rs.getBoolean("IS_POSITIVE"),
