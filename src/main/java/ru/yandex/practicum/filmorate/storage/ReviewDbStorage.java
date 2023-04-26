@@ -24,6 +24,7 @@ public class ReviewDbStorage implements ReviewStorage {
 
     @Override
     public long create(Review review) {
+        // тут проверить, что такой юзер и фильм существуют
         String reviewSql = "INSERT INTO PUBLIC.REVIEWS(CONTENT, IS_POSITIVE, USER_ID, FILM_ID) " +
                 "VALUES (?,?,?,?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
