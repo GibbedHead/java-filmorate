@@ -119,12 +119,24 @@ public class ReviewDbStorage implements ReviewStorage {
     }
 
     @Override
-    public void deleteLikeOrDislike(long reviewId, long userId) {
+    public void deleteLike(long reviewId, long userId) {
         String addLikeSql = "DELETE FROM " +
                 "  PUBLIC.REVIEW_REACTIONS " +
                 "WHERE " +
                 "  REVIEW_ID = ? " +
-                "  AND USER_ID = ?";
+                "  AND USER_ID = ? " +
+                "  AND REACTION = 1";
+        jdbcTemplate.update(addLikeSql, reviewId, userId);
+    }
+
+    @Override
+    public void deleteDislike(long reviewId, long userId) {
+        String addLikeSql = "DELETE FROM " +
+                "  PUBLIC.REVIEW_REACTIONS " +
+                "WHERE " +
+                "  REVIEW_ID = ? " +
+                "  AND USER_ID = ? " +
+                "  AND REACTION = -1";
         jdbcTemplate.update(addLikeSql, reviewId, userId);
     }
 
