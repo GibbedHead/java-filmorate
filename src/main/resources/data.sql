@@ -13,10 +13,6 @@ INSERT INTO PUBLIC.MPA (MPA_NAME) VALUES
 	 ('R'),
 	 ('NC-17');
 
-INSERT INTO PUBLIC.REACTIONS (name) VALUES
-     ('like'),
-     ('dislike');
-
 INSERT INTO public.film(name, description, release_date, duration, mpa_id) VALUES ('Титаник','Любовь на корабле','1991-09-21',240,1);
 
 INSERT INTO film_genre(film_id, genre_id) VALUES (1, 2);
@@ -30,4 +26,9 @@ INSERT INTO public.users(email,login,name,birthday) VALUES ('v.v_ivanova@mail.ru
 INSERT INTO public.users(email,login,name,birthday) VALUES ('sever_pomnit@mail.ru','sevyndel','Sever Matveev','2021-11-26');
 INSERT INTO public.users(email,login,name,birthday) VALUES ('matway@mail.ru','arturM','Artur Matveev','1985-01-02');
 
-INSERT INTO PUBLIC.REVIEWS (CONTENT, IS_POSITIVE, USER_ID, FILM_ID) VALUES ('Слезовыжималка', false, 1, 1)
+INSERT INTO PUBLIC.REVIEWS (CONTENT, IS_POSITIVE, USER_ID, FILM_ID) VALUES ('Слезовыжималка', false, 1, 1);
+
+INSERT INTO PUBLIC.REVIEW_REACTIONS(review_id, user_id, reaction) VALUES (1, 1, 1);
+INSERT INTO PUBLIC.REVIEW_REACTIONS(review_id, user_id, reaction) VALUES (1, 2, 1);
+INSERT INTO PUBLIC.REVIEW_REACTIONS(review_id, user_id, reaction) VALUES (1, 3, -1);
+
