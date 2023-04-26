@@ -10,7 +10,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class Review {
-    long id;
+    long reviewId;
     String content;
     @JsonProperty(value = "isPositive")
     boolean isPositive;
