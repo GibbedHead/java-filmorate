@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.RecommendationsService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
@@ -20,7 +19,6 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final RecommendationsService recommendationsService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -89,6 +87,6 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public List<Film> getFilmRecommendations(@PathVariable long id) throws UserNotFoundException {
         log.info("Запрос рекомендаций фильмов для пользователя {}", id);
-        return recommendationsService.getFilmRecommendations(id);
+        return userService.getFilmRecommendations(id);
     }
 }
