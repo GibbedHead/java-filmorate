@@ -49,9 +49,10 @@ public class ReviewStorageTest {
         Review review = reviewStorage.findById(1);
         review.setContent("updated content");
         review.setIsPositive(false);
+        reviewStorage.update(review);
         Review updatedReview = reviewStorage.findById(1);
-        assertEquals("updated content", review.getContent());
-        assertFalse(review.getIsPositive());
+        assertEquals("updated content", updatedReview.getContent());
+        assertFalse(updatedReview.getIsPositive());
     }
 
     @Test
@@ -97,5 +98,5 @@ public class ReviewStorageTest {
         List<Review> afterDeleteDislike = reviewStorage.findAllByFilmId(1, 10);
         assertEquals(1, afterDeleteDislike.get(0).getReviewId());
     }
-    
+
 }
