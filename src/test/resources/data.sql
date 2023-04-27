@@ -15,7 +15,10 @@ INSERT INTO PUBLIC.MPA (MPA_NAME) VALUES
 	 
 INSERT INTO PUBLIC.FILM (NAME,DESCRIPTION,RELEASE_DATE,DURATION,MPA_ID) VALUES
 	 ('Фильм1','Описание 1','1999-09-09',110,2),
-	 ('Фильм2','Описание2','1990-05-05',120,3);
+	 ('Фильм2','Описание 2','1990-05-05',120,3),
+	 ('Фильм3','Описание 3','1969-09-09',100,1),
+	 ('Фильм4','Описание 4','1979-09-09',115,4),
+	 ('Фильм5','Описание 5','1989-09-09',101,3);
 	 
 INSERT INTO PUBLIC.USERS (EMAIL,LOGIN,NAME,BIRTHDAY) VALUES
 	 ('user1@dom.com','user1','name1','2000-02-02'),
@@ -29,8 +32,12 @@ INSERT INTO PUBLIC.FILM_GENRE (FILM_ID,GENRE_ID) VALUES
 	 
 INSERT INTO PUBLIC.FILM_LIKES (FILM_ID,USER_ID) VALUES
 	 (1,1),
+	 (2,1),
+	 (4,1),
+	 (5,1),
 	 (1,2),
-	 (2,3);
+	 (3,2),
+	 (5,2);
 
 INSERT INTO PUBLIC.FRIENDS (REQUESTER_ID,ACCEPTER_ID,STATUS) VALUES
 	 (1,2,'requested'),
