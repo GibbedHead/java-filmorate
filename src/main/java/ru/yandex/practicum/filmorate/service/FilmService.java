@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.DirectorStorage;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
@@ -23,9 +24,13 @@ public class FilmService {
     @Qualifier("UserDbStorage")
     private final UserStorage userStorage;
 
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
+    @Autowired
+    private final DirectorStorage directorStorage;
+
+    public FilmService(FilmStorage filmStorage, UserStorage userStorage, DirectorStorage directorStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
+        this.directorStorage = directorStorage;
     }
 
     public Film create(Film film) throws FilmNotFoundException {
@@ -73,5 +78,20 @@ public class FilmService {
         Film testFilmExist = filmStorage.findById(id);
         filmStorage.delete(id);
         log.info("Удален фильм id = {}", id);
+    }
+
+
+    public List<Film> getDirectorsFilms(Long directorId, String param) {
+        directorStorage.findById(directorId);
+        List<Film> films;
+        if (param.equals("noParam")) {
+            films = filmStorage.findFilmsByDirectorId(directorId);
+        } else if (param.equals("year") || param.equals("likes")) {
+            films = filmStorage.findFilmsByDirectorId(directorId, param);
+        } else {
+            log.error("Invalid search query films by director's id with parameter: {}", param);
+            throw new IllegalArgumentException("Invalid search query films by director's id with parameter: " + param);
+        }
+        return films;
     }
 }
