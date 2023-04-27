@@ -70,7 +70,7 @@ public class ReviewService {
     public Review addDislike(long reviewId, long userId) throws ReviewNotFoundException, UserNotFoundException {
         Review review = reviewStorage.findById(reviewId);
         User user = userStorage.findById(userId);
-        reviewStorage.addLike(reviewId, userId);
+        reviewStorage.addDislike(reviewId, userId);
         log.info("Дизлайк отзыва {} пользователем {} добавлен", reviewId, userId);
         return reviewStorage.findById(reviewId);
     }

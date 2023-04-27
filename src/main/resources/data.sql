@@ -12,4 +12,3 @@ INSERT INTO PUBLIC.MPA (MPA_NAME) VALUES
 	 ('PG-13'),
 	 ('R'),
 	 ('NC-17');
-
