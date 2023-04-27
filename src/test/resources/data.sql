@@ -43,3 +43,7 @@ INSERT INTO PUBLIC.FRIENDS (REQUESTER_ID,ACCEPTER_ID,STATUS) VALUES
 	 (1,2,'requested'),
 	 (1,3,'accepted'),
 	 (2,3,'accepted');
+
+INSERT INTO PUBLIC.REVIEWS (CONTENT, IS_POSITIVE, USER_ID, FILM_ID) VALUES ('This film is not too bad.', true, 1, 1);
+INSERT INTO PUBLIC.REVIEWS (CONTENT, IS_POSITIVE, USER_ID, FILM_ID) VALUES ('This film is soo bad.', false, 2, 1);
+INSERT INTO PUBLIC.REVIEWS (CONTENT, IS_POSITIVE, USER_ID, FILM_ID) VALUES ('This film is beatiful.', true, 1, 2);
