@@ -28,7 +28,6 @@ public class ReviewService {
     private final FilmStorage filmStorage;
 
     public Review create(Review review) throws ReviewNotFoundException, UserNotFoundException, FilmNotFoundException {
-        // тут проверить, что такой юзер и фильм существуют
         User testUserExist = userStorage.findById(review.getUserId());
         Film testFilmExist = filmStorage.findById(review.getFilmId());
         long id = reviewStorage.create(review);
@@ -63,7 +62,7 @@ public class ReviewService {
         Review review = reviewStorage.findById(reviewId);
         User user = userStorage.findById(userId);
         reviewStorage.addLike(reviewId, userId);
-        log.info("Лайк отзыва {} пользователем {} добавлен", reviewId, userId);
+        log.info("Лайк отзыву {} от пользователя {} добавлен", reviewId, userId);
         return reviewStorage.findById(reviewId);
     }
 
@@ -71,7 +70,7 @@ public class ReviewService {
         Review review = reviewStorage.findById(reviewId);
         User user = userStorage.findById(userId);
         reviewStorage.addDislike(reviewId, userId);
-        log.info("Дизлайк отзыва {} пользователем {} добавлен", reviewId, userId);
+        log.info("Дизлайк отзыву {} от пользователя {} добавлен", reviewId, userId);
         return reviewStorage.findById(reviewId);
     }
 
@@ -79,7 +78,7 @@ public class ReviewService {
         Review review = reviewStorage.findById(reviewId);
         User user = userStorage.findById(userId);
         reviewStorage.deleteLike(reviewId, userId);
-        log.info("Лайк отзыва {} пользователем {} удален", reviewId, userId);
+        log.info("Лайк отзыву {} от пользователя {} удален", reviewId, userId);
         return reviewStorage.findById(reviewId);
     }
 
@@ -87,7 +86,7 @@ public class ReviewService {
         Review review = reviewStorage.findById(reviewId);
         User user = userStorage.findById(userId);
         reviewStorage.deleteDislike(reviewId, userId);
-        log.info("Дизлайк отзыва {} пользователем {} удален", reviewId, userId);
+        log.info("Дизлайк отзыву {} от пользователя {} удален", reviewId, userId);
         return reviewStorage.findById(reviewId);
     }
 
