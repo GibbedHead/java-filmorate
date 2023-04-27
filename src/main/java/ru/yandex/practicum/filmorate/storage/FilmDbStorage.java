@@ -16,6 +16,11 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -161,7 +166,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> getPopular(int count) {
+    public List<Film> getPopular(int count, int genreId, LocalDate year) {
         String sql = "" +
                 "SELECT " +
                 "  f.*, " +

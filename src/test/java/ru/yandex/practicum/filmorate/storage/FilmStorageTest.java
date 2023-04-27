@@ -14,6 +14,7 @@ import ru.yandex.practicum.filmorate.exception.MpaNotFoundException;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -83,14 +84,16 @@ class FilmStorageTest {
     void getPopular() {
         assertEquals(
                 1,
-                filmStorage.getPopular(10).get(0).getId());
+                filmStorage.getPopular(10, -1, LocalDate.of(0, 1, 1)).get(0).getId());
     }
 
     @Test
     void addLike() {
+        filmStorage.addLike(2, 1);
+        filmStorage.addLike(2, 2);
         assertEquals(
-                1,
-                filmStorage.getPopular(10).get(0).getId());
+                2,
+                filmStorage.getPopular(10, -1, LocalDate.of(0, 1, 1)).get(0).getId());
     }
 
     @Test
@@ -98,8 +101,8 @@ class FilmStorageTest {
         filmStorage.deleteLike(1, 1);
         filmStorage.deleteLike(1, 2);
         assertEquals(
-                5,
-                filmStorage.getPopular(10).get(0).getId());
+                2,
+                filmStorage.getPopular(10, -1, LocalDate.of(0, 1, 1)).get(0).getId());
     }
 
     @Test

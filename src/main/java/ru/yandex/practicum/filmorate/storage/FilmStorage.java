@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.storage;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface FilmStorage {
@@ -16,7 +17,7 @@ public interface FilmStorage {
 
     Film findById(long id) throws FilmNotFoundException;
 
-    List<Film> getPopular(int count);
+    List<Film> getPopular(int count, int genreId, LocalDate year);
 
     void addLike(long filmId, long userId);
 

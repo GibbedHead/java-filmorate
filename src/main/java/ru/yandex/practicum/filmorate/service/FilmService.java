@@ -16,6 +16,7 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserActivityStorageInterface;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -71,8 +72,8 @@ public class FilmService {
         log.info("Лайк фильма {} пользователем {} удален", filmId, userId);
     }
 
-    public List<Film> getPopularFilms(int count) {
-        return filmStorage.getPopular(count);
+    public List<Film> getPopularFilms(int count, int genreId, LocalDate year) {
+        return filmStorage.getPopular(count, genreId, year);
     }
 
     public void delete(long id) throws FilmNotFoundException {
