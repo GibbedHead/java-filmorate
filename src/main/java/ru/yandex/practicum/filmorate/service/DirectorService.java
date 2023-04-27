@@ -17,7 +17,7 @@ public class DirectorService {
         return directorStorage.save(director);
     }
 
-    public Director getDirectorById(Long id){
+    public Director getDirectorById(Long id) {
         return directorStorage.findById(id);
     }
 
