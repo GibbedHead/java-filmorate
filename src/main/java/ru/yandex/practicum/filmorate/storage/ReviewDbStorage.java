@@ -44,15 +44,13 @@ public class ReviewDbStorage implements ReviewStorage {
                 "  PUBLIC.REVIEWS " +
                 "SET " +
                 "  CONTENT = ?, " +
-                "  IS_POSITIVE = ?, " +
-                " USEFUL = ? " +
+                "  IS_POSITIVE = ? " +
                 "WHERE " +
                 "  REVIEW_ID = ?";
         jdbcTemplate.update(
                 updateReviewSql,
                 review.getContent(),
                 review.getIsPositive(),
-                getUseful(review.getReviewId()),
                 review.getReviewId()
         );
     }
@@ -87,6 +85,7 @@ public class ReviewDbStorage implements ReviewStorage {
             String sql = "" +
                     "SELECT * " +
                     "FROM PUBLIC.REVIEWS " +
+                    "ORDER BY USEFUL DESC, REVIEW_ID " +
                     "LIMIT ?";
             return jdbcTemplate.query(sql, (rs, rowNum) -> makeReview(rs), count);
         }
@@ -94,6 +93,7 @@ public class ReviewDbStorage implements ReviewStorage {
                 "SELECT * " +
                 "FROM PUBLIC.REVIEWS " +
                 "WHERE FILM_ID = ? " +
+                "ORDER BY USEFUL DESC, REVIEW_ID " +
                 "LIMIT ?";
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeReview(rs), filmId, count);
     }
@@ -104,6 +104,8 @@ public class ReviewDbStorage implements ReviewStorage {
                 "VALUES " +
                 "  (?, ?, ?)";
         jdbcTemplate.update(addLikeSql, reviewId, userId, 1);
+
+        updateUseful(reviewId);
     }
 
     @Override
@@ -112,6 +114,8 @@ public class ReviewDbStorage implements ReviewStorage {
                 "VALUES " +
                 "  (?, ?, ?)";
         jdbcTemplate.update(addLikeSql, reviewId, userId, -1);
+
+        updateUseful(reviewId);
     }
 
     @Override
@@ -123,6 +127,8 @@ public class ReviewDbStorage implements ReviewStorage {
                 "  AND USER_ID = ? " +
                 "  AND REACTION = 1";
         jdbcTemplate.update(addLikeSql, reviewId, userId);
+
+        updateUseful(reviewId);
     }
 
     @Override
@@ -134,6 +140,8 @@ public class ReviewDbStorage implements ReviewStorage {
                 "  AND USER_ID = ? " +
                 "  AND REACTION = -1";
         jdbcTemplate.update(addLikeSql, reviewId, userId);
+
+        updateUseful(reviewId);
     }
 
     private Review makeReview(ResultSet rs) throws SQLException {
@@ -144,7 +152,7 @@ public class ReviewDbStorage implements ReviewStorage {
                 rs.getBoolean("IS_POSITIVE"),
                 rs.getLong("USER_ID"),
                 rs.getLong("FILM_ID"),
-                getUseful(rs.getLong("REVIEW_ID"))
+                rs.getInt("USEFUL")
         );
     }
 
@@ -160,6 +168,21 @@ public class ReviewDbStorage implements ReviewStorage {
             return 0;
         }
         return useful.get(0);
+    }
+
+    private void updateUseful(long reviewId) {
+
+        String updateUsefulSql = "UPDATE " +
+                "  PUBLIC.REVIEWS " +
+                "SET " +
+                "  USEFUL = ? " +
+                "WHERE " +
+                "  REVIEW_ID = ?";
+        jdbcTemplate.update(
+                updateUsefulSql,
+                getUseful(reviewId),
+                reviewId
+        );
     }
 
 }
