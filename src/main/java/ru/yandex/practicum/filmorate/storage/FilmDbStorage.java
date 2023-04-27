@@ -172,6 +172,22 @@ public class FilmDbStorage implements FilmStorage {
         jdbcTemplate.update(addLikeSql, filmId, userId);
     }
 
+    @Override
+    public List<Film> getFilmRecommendations(long userId)  {
+        String sqlQuery = "SELECT f.FILM_ID, f.NAME, f.DESCRIPTION, f.RELEASE_DATE, f.DURATION, m.MPA_ID, m.MPA_NAME " +
+                "FROM FILM_LIKES fl1 " +
+                "JOIN FILM_LIKES fl2 ON fl2.FILM_ID = fl1.FILM_ID AND fl1.USER_ID = ? " +
+                "JOIN FILM_LIKES fl3 ON fl3.USER_ID = fl2.USER_ID AND fl3.USER_ID <> ? " +
+                "LEFT JOIN FILM_LIKES fl4 ON fl4.USER_ID = ? AND fl4.FILM_ID = fl3.FILM_ID " +
+                "JOIN FILM f ON f.FILM_ID = fl3.FILM_ID " +
+                "JOIN MPA m ON f.MPA_ID = m.MPA_ID " +
+                "WHERE fl4.FILM_ID IS NULL OR fl4.USER_ID IS NULL " +
+                "GROUP BY fl3.FILM_ID, f.FILM_ID " +
+                "ORDER BY COUNT(*) DESC";
+
+        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> makeFilm(rs), userId, userId, userId);
+    }
+
     private Film makeFilm(ResultSet rs) throws SQLException {
         Film film = new Film(
                 rs.getLong("FILM_ID"),
