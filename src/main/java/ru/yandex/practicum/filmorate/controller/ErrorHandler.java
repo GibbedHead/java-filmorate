@@ -8,10 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
-import ru.yandex.practicum.filmorate.exception.GenreNotFoundException;
-import ru.yandex.practicum.filmorate.exception.MpaNotFoundException;
-import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
+import ru.yandex.practicum.filmorate.exception.*;
 import ru.yandex.practicum.filmorate.model.ErrorResponse;
 
 import java.util.HashMap;
@@ -20,33 +17,10 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class ErrorHandler {
-    @ExceptionHandler(UserNotFoundException.class)
+    @ExceptionHandler(value = {UserNotFoundException.class, DirectorNotFoundException.class,
+            FilmNotFoundException.class, GenreNotFoundException.class, MpaNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleUserNotFoundException(final UserNotFoundException e) {
-        return new ErrorResponse(
-                e.getMessage()
-        );
-    }
-
-    @ExceptionHandler(FilmNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleFilmNotFoundException(final FilmNotFoundException e) {
-        return new ErrorResponse(
-                e.getMessage()
-        );
-    }
-
-    @ExceptionHandler(GenreNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleGenreNotFoundException(final GenreNotFoundException e) {
-        return new ErrorResponse(
-                e.getMessage()
-        );
-    }
-
-    @ExceptionHandler(MpaNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleMpaNotFoundException(final MpaNotFoundException e) {
+    public ErrorResponse handleUserNotFoundException(final Exception e) {
         return new ErrorResponse(
                 e.getMessage()
         );
