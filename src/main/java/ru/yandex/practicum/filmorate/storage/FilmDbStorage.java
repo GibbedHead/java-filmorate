@@ -204,12 +204,12 @@ public class FilmDbStorage implements FilmStorage {
                 "  f.FILM_ID " +
                 "ORDER BY " +
                 "  likes_count DESC ";
-                
+
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), userId, friendId);
     }
 
     @Override
-    public List<Film> getFilmRecommendations(long userId)  {
+    public List<Film> getFilmRecommendations(long userId) {
         String sqlQuery = "SELECT f.FILM_ID, f.NAME, f.DESCRIPTION, f.RELEASE_DATE, f.DURATION, m.MPA_ID, m.MPA_NAME " +
                 "FROM FILM_LIKES fl1 " +
                 "JOIN FILM_LIKES fl2 ON fl2.FILM_ID = fl1.FILM_ID AND fl1.USER_ID = ? " +
