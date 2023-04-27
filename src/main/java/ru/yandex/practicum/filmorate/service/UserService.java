@@ -84,7 +84,8 @@ public class UserService {
         return friends1;
     }
 
-    public List<Film> getFilmRecommendations(Long userId) {
+    public List<Film> getFilmRecommendations(Long userId) throws UserNotFoundException {
+        userStorage.findById(userId);
         return filmStorage.getFilmRecommendations(userId);
     }
 

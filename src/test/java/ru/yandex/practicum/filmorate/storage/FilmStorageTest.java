@@ -111,4 +111,9 @@ class FilmStorageTest {
                 "}";
         return objectMapper.readValue(filmJson, Film.class);
     }
+
+    @Test
+    void recommendationsTest() {
+
+    }
 }
