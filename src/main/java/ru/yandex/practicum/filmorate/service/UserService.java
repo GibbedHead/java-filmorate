@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.UserActivityEvent;
+import ru.yandex.practicum.filmorate.storage.UserActivityStorageInterface;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.List;
@@ -17,8 +19,13 @@ public class UserService {
     @Qualifier("UserDbStorage")
     private final UserStorage userStorage;
 
-    public UserService(UserStorage userStorage) {
+    @Autowired
+    @Qualifier("UserActivityDbStorage")
+    private final UserActivityStorageInterface userActivityStorage;
+
+    public UserService(UserStorage userStorage, UserActivityStorageInterface userActivityStorage) {
         this.userStorage = userStorage;
+        this.userActivityStorage = userActivityStorage;
     }
 
     public User create(User user) throws UserNotFoundException {
@@ -57,12 +64,14 @@ public class UserService {
         User user1 = userStorage.findById(user1Id);
         User user2 = userStorage.findById(user2Id);
         userStorage.createOrConfirmFriendship(user1Id, user2Id);
+        userActivityStorage.save(user1Id, UserActivityEvent.EventType.FRIEND,UserActivityEvent.Operation.ADD,user2Id);
     }
 
     public void deleteFriend(long user1Id, long user2Id) throws UserNotFoundException {
         User user1 = userStorage.findById(user1Id);
         User user2 = userStorage.findById(user2Id);
         userStorage.deleteFriend(user1Id, user2Id);
+        userActivityStorage.save(user1Id, UserActivityEvent.EventType.FRIEND,UserActivityEvent.Operation.REMOVE,user2Id);
         log.info("Дружба {} и {} удалена", user1Id, user2Id);
     }
 
@@ -79,6 +88,4 @@ public class UserService {
         friends1.retainAll(friends2);
         return friends1;
     }
-
-
 }

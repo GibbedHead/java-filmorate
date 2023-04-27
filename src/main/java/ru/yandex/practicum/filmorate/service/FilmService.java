@@ -8,7 +8,9 @@ import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.UserActivityEvent;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.UserActivityStorageInterface;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.List;
@@ -23,9 +25,14 @@ public class FilmService {
     @Qualifier("UserDbStorage")
     private final UserStorage userStorage;
 
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
+    @Autowired
+    @Qualifier("UserActivityDbStorage")
+    private final UserActivityStorageInterface userActivityStorage;
+
+    public FilmService(FilmStorage filmStorage, UserStorage userStorage, UserActivityStorageInterface userActivityStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
+        this.userActivityStorage = userActivityStorage;
     }
 
     public Film create(Film film) throws FilmNotFoundException {
@@ -55,6 +62,7 @@ public class FilmService {
         Film film = filmStorage.findById(filmId);
         User user = userStorage.findById(userId);
         filmStorage.addLike(filmId, userId);
+        userActivityStorage.save(userId, UserActivityEvent.EventType.LIKE,UserActivityEvent.Operation.ADD,filmId);
         log.info("Лайк фильма {} пользователем {} добавлен", filmId, userId);
     }
 
@@ -62,6 +70,7 @@ public class FilmService {
         Film film = filmStorage.findById(filmId);
         User user = userStorage.findById(userId);
         filmStorage.deleteLike(filmId, userId);
+        userActivityStorage.save(userId, UserActivityEvent.EventType.LIKE,UserActivityEvent.Operation.REMOVE,filmId);
         log.info("Лайк фильма {} пользователем {} удален", filmId, userId);
     }
 

@@ -81,4 +81,5 @@ public class UserController {
         log.info("Запрос общих друзей пользователя {} и {}", id, otherId);
         return userService.getCommonFriends(id, otherId);
     }
+
 }
