@@ -9,10 +9,9 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import ru.yandex.practicum.filmorate.exception.ReviewNotFoundException;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Review;
 
-import java.util.Set;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,7 +35,7 @@ public class ReviewStorageTest {
     }
 
     @Test
-    public void  create() throws ReviewNotFoundException, JsonProcessingException {
+    public void create() throws ReviewNotFoundException, JsonProcessingException {
         long id = reviewStorage.create(getReviewFromJson());
         Review review = reviewStorage.findById(id);
         assertEquals("some content", review.getContent());
@@ -61,16 +60,42 @@ public class ReviewStorageTest {
         assertEquals(1, reviewStorage.findAllByFilmId(1, 10).size());
     }
 
- /*   Review findById(long id) throws ReviewNotFoundException;
+    @Test
+    public void addLike() {
+        List<Review> beforeLike = reviewStorage.findAllByFilmId(1, 10);
+        assertEquals(1, beforeLike.get(0).getReviewId());
+        reviewStorage.addLike(2, 3);
+        List<Review> afterLike = reviewStorage.findAllByFilmId(1, 10);
+        assertEquals(2, afterLike.get(0).getReviewId());
+    }
 
-    List<Review> findAllByFilmId(long filmId, int count);
+    @Test
+    public void addDislike() {
+        List<Review> beforeDislike = reviewStorage.findAllByFilmId(1, 10);
+        assertEquals(1, beforeDislike.get(0).getReviewId());
+        reviewStorage.addDislike(1, 3);
+        List<Review> afterDislike = reviewStorage.findAllByFilmId(1, 10);
+        assertEquals(2, afterDislike.get(0).getReviewId());
+    }
 
-    void addLike(long reviewId, long userId);
+    @Test
+    public void deleteLike() {
+        reviewStorage.addLike(2, 3);
+        List<Review> afterLike = reviewStorage.findAllByFilmId(1, 10);
+        assertEquals(2, afterLike.get(0).getReviewId());
+        reviewStorage.deleteLike(2, 3);
+        List<Review> afterDeleteLike = reviewStorage.findAllByFilmId(1, 10);
+        assertEquals(1, afterDeleteLike.get(0).getReviewId());
+    }
 
-    void addDislike(long reviewId, long userId);
-
-    void deleteLike(long reviewId, long userId);
-
-    void deleteDislike(long reviewId, long userId);
-     */
+    @Test
+    public void deleteDislike() {
+        reviewStorage.addDislike(1, 3);
+        List<Review> afterDislike = reviewStorage.findAllByFilmId(1, 10);
+        assertEquals(2, afterDislike.get(0).getReviewId());
+        reviewStorage.deleteDislike(1, 3);
+        List<Review> afterDeleteDislike = reviewStorage.findAllByFilmId(1, 10);
+        assertEquals(1, afterDeleteDislike.get(0).getReviewId());
+    }
+    
 }
