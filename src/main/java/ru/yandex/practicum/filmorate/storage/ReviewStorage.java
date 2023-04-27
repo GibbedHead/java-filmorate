@@ -16,8 +16,12 @@ public interface ReviewStorage {
     Review findById(long id) throws ReviewNotFoundException;
 
     List<Review> findAllByFilmId(long filmId, int count);
+
     void addLike(long reviewId, long userId);
+
     void addDislike(long reviewId, long userId);
+
     void deleteLike(long reviewId, long userId);
+
     void deleteDislike(long reviewId, long userId);
 }

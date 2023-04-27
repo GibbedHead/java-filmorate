@@ -104,7 +104,6 @@ public class ReviewDbStorage implements ReviewStorage {
                 "VALUES " +
                 "  (?, ?, ?)";
         jdbcTemplate.update(addLikeSql, reviewId, userId, 1);
-
         updateUseful(reviewId);
     }
 
@@ -114,7 +113,6 @@ public class ReviewDbStorage implements ReviewStorage {
                 "VALUES " +
                 "  (?, ?, ?)";
         jdbcTemplate.update(addLikeSql, reviewId, userId, -1);
-
         updateUseful(reviewId);
     }
 
@@ -127,7 +125,6 @@ public class ReviewDbStorage implements ReviewStorage {
                 "  AND USER_ID = ? " +
                 "  AND REACTION = 1";
         jdbcTemplate.update(addLikeSql, reviewId, userId);
-
         updateUseful(reviewId);
     }
 
@@ -140,12 +137,10 @@ public class ReviewDbStorage implements ReviewStorage {
                 "  AND USER_ID = ? " +
                 "  AND REACTION = -1";
         jdbcTemplate.update(addLikeSql, reviewId, userId);
-
         updateUseful(reviewId);
     }
 
     private Review makeReview(ResultSet rs) throws SQLException {
-
         return new Review(
                 rs.getLong("REVIEW_ID"),
                 rs.getString("CONTENT"),
@@ -157,12 +152,10 @@ public class ReviewDbStorage implements ReviewStorage {
     }
 
     private int getUseful(long reviewId) {
-
         String sql = "SELECT SUM(REACTION) " +
                 "FROM PUBLIC.REVIEW_REACTIONS " +
                 "WHERE REVIEW_ID = ? " +
                 "GROUP BY REVIEW_ID";
-
         List<Integer> useful = jdbcTemplate.query(sql, (rs, rowNum) -> rs.getInt("SUM(REACTION)"), reviewId);
         if (useful.isEmpty()) {
             return 0;
@@ -171,7 +164,6 @@ public class ReviewDbStorage implements ReviewStorage {
     }
 
     private void updateUseful(long reviewId) {
-
         String updateUsefulSql = "UPDATE " +
                 "  PUBLIC.REVIEWS " +
                 "SET " +

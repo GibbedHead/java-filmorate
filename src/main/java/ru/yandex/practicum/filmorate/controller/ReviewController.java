@@ -61,7 +61,7 @@ public class ReviewController {
     @ResponseStatus(HttpStatus.OK)
     public Review addLike(@PathVariable long id, @PathVariable long userId)
             throws ReviewNotFoundException, UserNotFoundException {
-        log.info("Запрос лайка отзыва {} пользователем {}", id, userId);
+        log.info("Запрос на добавление лайка отзыву {} от пользователя {}", id, userId);
         return reviewService.addLike(id, userId);
     }
 
@@ -69,7 +69,7 @@ public class ReviewController {
     @ResponseStatus(HttpStatus.OK)
     public Review addDislike(@PathVariable long id, @PathVariable long userId)
             throws ReviewNotFoundException, UserNotFoundException {
-        log.info("Запрос дизлайка отзыва {} пользователем {}", id, userId);
+        log.info("Запрос на добавление дизлайка отзыву {} от пользователя {}", id, userId);
         return reviewService.addDislike(id, userId);
     }
 
@@ -77,7 +77,7 @@ public class ReviewController {
     @ResponseStatus(HttpStatus.OK)
     public Review deleteLike(@PathVariable long id, @PathVariable long userId)
             throws ReviewNotFoundException, UserNotFoundException {
-        log.info("Запрос удаления лайка отзыва {} пользователем {}", id, userId);
+        log.info("Запрос на удаление лайка у отзыва {} от пользователя {}", id, userId);
         return reviewService.deleteLike(id, userId);
     }
 
@@ -85,7 +85,7 @@ public class ReviewController {
     @ResponseStatus(HttpStatus.OK)
     public Review deleteDislike(@PathVariable long id, @PathVariable long userId)
             throws ReviewNotFoundException, UserNotFoundException {
-        log.info("Запрос удаления дизлайка отзыва {} пользователем {}", id, userId);
+        log.info("Запрос на удаление дизлайка у отзыва {} от пользователя {}", id, userId);
         return reviewService.deleteDislike(id, userId);
     }
 
