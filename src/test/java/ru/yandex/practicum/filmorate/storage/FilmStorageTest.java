@@ -84,7 +84,7 @@ class FilmStorageTest {
     void getPopular() {
         assertEquals(
                 1,
-                filmStorage.getPopular(10, -1, LocalDate.of(0, 1, 1)).get(0).getId());
+                filmStorage.getPopular(10, null, null).get(0).getId());
     }
 
     @Test
@@ -93,7 +93,7 @@ class FilmStorageTest {
         filmStorage.addLike(2, 2);
         assertEquals(
                 2,
-                filmStorage.getPopular(10, -1, LocalDate.of(0, 1, 1)).get(0).getId());
+                filmStorage.getPopular(10, null, null).get(0).getId());
     }
 
     @Test
@@ -102,7 +102,7 @@ class FilmStorageTest {
         filmStorage.deleteLike(1, 2);
         assertEquals(
                 2,
-                filmStorage.getPopular(10, -1, LocalDate.of(0, 1, 1)).get(0).getId());
+                filmStorage.getPopular(10, null, null).get(0).getId());
     }
 
     @Test

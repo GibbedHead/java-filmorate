@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
@@ -11,7 +10,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -78,9 +76,8 @@ public class FilmController {
     @ResponseStatus(HttpStatus.OK)
     public List<Film> getTopLikedFilms(
             @RequestParam(name = "count", defaultValue = "10", required = false) Integer count,
-            @RequestParam(name = "genreId", defaultValue = "-1", required = false) Integer genreId,
-            @RequestParam(name = "year", defaultValue = "0", required = false)
-            @DateTimeFormat(pattern = "yyyy") LocalDate year
+            @RequestParam(name = "genreId", required = false) Long genreId,
+            @RequestParam(name = "year", required = false) String year
     ) {
         log.info("Запрос {} самых популярных фильмов, id жанра {}, за {} год", count, genreId, year);
         return filmService.getPopularFilms(count, genreId, year);
