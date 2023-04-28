@@ -49,3 +49,35 @@ INSERT INTO PUBLIC.USER_ACTIVITIES (USER_ID, EVENT_TYPE, TIMESTAMP, OPERATION, E
     (1, 'REVIEW', '2023-01-01 11:30:00', 'UPDATE', 1),
     (1, 'REVIEW', '2023-01-01 12:00:00', 'REMOVE', 1);
 
+	 ('Фильм2','Описание 2','1990-05-05',120,3),
+	 ('Фильм3','Описание 3','1969-09-09',100,1),
+	 ('Фильм4','Описание 4','1979-09-09',115,4),
+	 ('Фильм5','Описание 5','1989-09-09',101,3);
+	 
+INSERT INTO PUBLIC.USERS (EMAIL,LOGIN,NAME,BIRTHDAY) VALUES
+	 ('user1@dom.com','user1','name1','2000-02-02'),
+	 ('user2@dom.com','user2','name2','1995-08-08'),
+	 ('user3@dom.com','user3','name3','1955-09-09');
+	 
+INSERT INTO PUBLIC.FILM_GENRE (FILM_ID,GENRE_ID) VALUES
+	 (1,2),
+	 (1,4),
+	 (2,5);
+	 
+INSERT INTO PUBLIC.FILM_LIKES (FILM_ID,USER_ID) VALUES
+	 (1,1),
+	 (2,1),
+	 (4,1),
+	 (5,1),
+	 (1,2),
+	 (3,2),
+	 (5,2);
+
+INSERT INTO PUBLIC.FRIENDS (REQUESTER_ID,ACCEPTER_ID,STATUS) VALUES
+	 (1,2,'requested'),
+	 (1,3,'accepted'),
+	 (2,3,'accepted');
+
+INSERT INTO PUBLIC.REVIEWS (CONTENT, IS_POSITIVE, USER_ID, FILM_ID) VALUES ('This film is not too bad.', true, 1, 1);
+INSERT INTO PUBLIC.REVIEWS (CONTENT, IS_POSITIVE, USER_ID, FILM_ID) VALUES ('This film is soo bad.', false, 2, 1);
+INSERT INTO PUBLIC.REVIEWS (CONTENT, IS_POSITIVE, USER_ID, FILM_ID) VALUES ('This film is beatiful.', true, 1, 2);
