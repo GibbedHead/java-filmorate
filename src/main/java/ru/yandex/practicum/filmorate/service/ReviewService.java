@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ReviewNotFoundException;
@@ -10,8 +11,10 @@ import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.UserActivityEvent;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.ReviewStorage;
+import ru.yandex.practicum.filmorate.storage.UserActivityStorageInterface;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.List;
@@ -26,12 +29,16 @@ public class ReviewService {
     private final UserStorage userStorage;
     @Autowired
     private final FilmStorage filmStorage;
+    @Autowired
+    @Qualifier("UserActivityDbStorage")
+    private final UserActivityStorageInterface userActivityStorage;
 
     public Review create(Review review) throws ReviewNotFoundException, UserNotFoundException, FilmNotFoundException {
         User testUserExist = userStorage.findById(review.getUserId());
         Film testFilmExist = filmStorage.findById(review.getFilmId());
         long id = reviewStorage.create(review);
         Review addedReview = reviewStorage.findById(id);
+        userActivityStorage.save(testUserExist.getId(), UserActivityEvent.EventType.REVIEW, UserActivityEvent.Operation.ADD, addedReview.getReviewId());
         log.info("Добавлен отзыв: {}", addedReview);
         return addedReview;
     }
@@ -40,6 +47,7 @@ public class ReviewService {
         Review sourceReview = reviewStorage.findById(review.getReviewId());
         reviewStorage.update(review);
         Review updatedReview = reviewStorage.findById(review.getReviewId());
+        userActivityStorage.save(userStorage.findById(updatedReview.getUserId()).getId(), UserActivityEvent.EventType.REVIEW, UserActivityEvent.Operation.UPDATE, updatedReview.getReviewId());
         log.info("Обновлен отзыв {} на {}", sourceReview, updatedReview);
         return updatedReview;
     }
@@ -47,6 +55,7 @@ public class ReviewService {
     public void delete(long id) throws ReviewNotFoundException {
         Review testReviewExist = reviewStorage.findById(id);
         reviewStorage.delete(id);
+        userActivityStorage.save(userStorage.findById(testReviewExist.getUserId()).getId(), UserActivityEvent.EventType.REVIEW, UserActivityEvent.Operation.REMOVE, testReviewExist.getReviewId());
         log.info("Удален отзыв с id = {}", id);
     }
 

@@ -62,7 +62,7 @@ public class FilmService {
         Film film = filmStorage.findById(filmId);
         User user = userStorage.findById(userId);
         filmStorage.addLike(filmId, userId);
-        userActivityStorage.save(userId, UserActivityEvent.EventType.LIKE,UserActivityEvent.Operation.ADD,filmId);
+        userActivityStorage.save(userId, UserActivityEvent.EventType.LIKE, UserActivityEvent.Operation.ADD, filmId);
         log.info("Лайк фильма {} пользователем {} добавлен", filmId, userId);
     }
 
@@ -70,7 +70,7 @@ public class FilmService {
         Film film = filmStorage.findById(filmId);
         User user = userStorage.findById(userId);
         filmStorage.deleteLike(filmId, userId);
-        userActivityStorage.save(userId, UserActivityEvent.EventType.LIKE,UserActivityEvent.Operation.REMOVE,filmId);
+        userActivityStorage.save(userId, UserActivityEvent.EventType.LIKE, UserActivityEvent.Operation.REMOVE, filmId);
         log.info("Лайк фильма {} пользователем {} удален", filmId, userId);
     }
 

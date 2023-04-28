@@ -1,5 +1,5 @@
 package ru.yandex.practicum.filmorate.storage;
-//TODO: в ReviewService добавить по аналогии с FilmService и UserService
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -55,7 +55,7 @@ public class UserActivityDbStorage implements UserActivityStorageInterface {
             stmt.setString(2, String.valueOf(eventType));
             stmt.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
             stmt.setString(4, String.valueOf(operation));
-            stmt.setLong(5,entityId);
+            stmt.setLong(5, entityId);
             return stmt;
         }, keyHolder);
         return Objects.requireNonNull(keyHolder.getKey()).longValue();

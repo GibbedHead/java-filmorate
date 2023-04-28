@@ -22,10 +22,10 @@ public class UserActivityController {
 
     @GetMapping("/{id}/feed")
     public ResponseEntity<List<UserActivityEvent>> getUserFeed(@PathVariable("id") long userId) {
-            List<UserActivityEvent> userFeed = userActivityService.getUserFeed(userId);
-            log.info("Запрос ленты для пользователя: {}", userId);
+        List<UserActivityEvent> userFeed = userActivityService.getUserFeed(userId);
+        log.info("Запрос ленты для пользователя: {}", userId);
 
-            return new ResponseEntity<>(userFeed, HttpStatus.OK);
+        return new ResponseEntity<>(userFeed, HttpStatus.OK);
     }
 }
 

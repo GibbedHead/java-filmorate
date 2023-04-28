@@ -64,14 +64,14 @@ public class UserService {
         User user1 = userStorage.findById(user1Id);
         User user2 = userStorage.findById(user2Id);
         userStorage.createOrConfirmFriendship(user1Id, user2Id);
-        userActivityStorage.save(user1Id, UserActivityEvent.EventType.FRIEND,UserActivityEvent.Operation.ADD,user2Id);
+        userActivityStorage.save(user1Id, UserActivityEvent.EventType.FRIEND, UserActivityEvent.Operation.ADD, user2Id);
     }
 
     public void deleteFriend(long user1Id, long user2Id) throws UserNotFoundException {
         User user1 = userStorage.findById(user1Id);
         User user2 = userStorage.findById(user2Id);
         userStorage.deleteFriend(user1Id, user2Id);
-        userActivityStorage.save(user1Id, UserActivityEvent.EventType.FRIEND,UserActivityEvent.Operation.REMOVE,user2Id);
+        userActivityStorage.save(user1Id, UserActivityEvent.EventType.FRIEND, UserActivityEvent.Operation.REMOVE, user2Id);
         log.info("Дружба {} и {} удалена", user1Id, user2Id);
     }
 

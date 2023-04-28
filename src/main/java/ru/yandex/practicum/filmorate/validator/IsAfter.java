@@ -8,9 +8,12 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = DateValidator.class)
 @Documented
-public @interface IsAfter{
+public @interface IsAfter {
     String message() default "Дата должна быть после {fromDate}";
+
     String fromDate();
+
     Class<?>[] groups() default {};
+
     Class<? extends Payload>[] payload() default {};
 }
