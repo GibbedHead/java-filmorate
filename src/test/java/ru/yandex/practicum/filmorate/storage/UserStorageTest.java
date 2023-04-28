@@ -69,5 +69,4 @@ class UserStorageTest {
         return objectMapper.readValue(userJson, User.class);
     }
 
-
 }
