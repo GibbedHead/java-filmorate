@@ -5,9 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.model.UserActivityEvent;
 import ru.yandex.practicum.filmorate.storage.UserActivityStorageInterface;
+=======
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.List;
@@ -18,6 +21,8 @@ public class UserService {
     @Autowired
     @Qualifier("UserDbStorage")
     private final UserStorage userStorage;
+    private final FilmStorage filmStorage;
+
 
     @Autowired
     @Qualifier("UserActivityDbStorage")
@@ -26,6 +31,10 @@ public class UserService {
     public UserService(UserStorage userStorage, UserActivityStorageInterface userActivityStorage) {
         this.userStorage = userStorage;
         this.userActivityStorage = userActivityStorage;
+
+    public UserService(UserStorage userStorage, FilmStorage filmStorage) {
+        this.userStorage = userStorage;
+        this.filmStorage = filmStorage;
     }
 
     public User create(User user) throws UserNotFoundException {
