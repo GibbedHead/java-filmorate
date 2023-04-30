@@ -19,30 +19,26 @@ class FilmorateApplicationTests {
 
 	@Test
 	void filmRealiseDateValidatorShouldThrowExceptionOnDatesBefore28December1895() {
-		Film film = new Film(
-				0,
-				"Test name",
-				"Test desc",
-				LocalDate.of(1800, 1, 1),
-				90,
-				null,
-				null
-		);
+		Film film = Film.builder()
+				.id(0)
+				.name("Test name")
+				.description("Test desc")
+				.releaseDate(LocalDate.of(1800, 1, 1))
+				.duration(90)
+				.build();
 		Set<ConstraintViolation<Film>> violations = validator.validate(film);
 		assertEquals(violations.size(), 1);
 	}
 
 	@Test
 	void filmRealiseDateValidatorShouldNotThrowExceptionOnDatesAfter28December1895() {
-		Film film = new Film(
-				0,
-				"Test name",
-				"Test desc",
-				LocalDate.of(1990, 1, 1),
-				90,
-				null,
-				null
-		);
+		Film film = Film.builder()
+				.id(0)
+				.name("Test name")
+				.description("Test desc")
+				.releaseDate(LocalDate.of(1990, 1, 1))
+				.duration(90)
+				.build();
 		Set<ConstraintViolation<Film>> violations = validator.validate(film);
 		assertEquals(violations.size(), 0);
 	}
