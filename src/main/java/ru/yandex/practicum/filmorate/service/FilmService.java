@@ -9,6 +9,8 @@ import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.model.UserActivityEvent;
+
+import ru.yandex.practicum.filmorate.storage.DirectorStorage;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserActivityStorageInterface;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
@@ -17,23 +19,15 @@ import java.util.List;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class FilmService {
-    @Autowired
+
     @Qualifier("FilmDbStorage")
     private final FilmStorage filmStorage;
-    @Autowired
     @Qualifier("UserDbStorage")
     private final UserStorage userStorage;
-
-    @Autowired
     @Qualifier("UserActivityDbStorage")
     private final UserActivityStorageInterface userActivityStorage;
-
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage, UserActivityStorageInterface userActivityStorage) {
-        this.filmStorage = filmStorage;
-        this.userStorage = userStorage;
-        this.userActivityStorage = userActivityStorage;
-    }
 
     public Film create(Film film) throws FilmNotFoundException {
         long id = filmStorage.create(film);
@@ -86,5 +80,20 @@ public class FilmService {
 
     public List<Film> getCommon(long userId, long friendId) {
         return filmStorage.getCommon(userId, friendId);
+    }
+
+
+    public List<Film> getDirectorsFilms(Long directorId, String param) {
+        directorStorage.findById(directorId);
+        List<Film> films;
+        if (param.equals("noParam")) {
+            films = filmStorage.findFilmsByDirectorId(directorId);
+        } else if (param.equals("year") || param.equals("likes")) {
+            films = filmStorage.findFilmsByDirectorId(directorId, param);
+        } else {
+            log.error("Invalid search query films by director's id with parameter: {}", param);
+            throw new IllegalArgumentException("Invalid search query films by director's id with parameter: " + param);
+        }
+        return films;
     }
 }
