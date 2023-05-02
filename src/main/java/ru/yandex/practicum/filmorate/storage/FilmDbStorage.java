@@ -192,7 +192,13 @@ public class FilmDbStorage implements FilmStorage {
                         "LIMIT ?"
         );
         argList.add(count);
-        return jdbcTemplate.query(sqlBuilder.toString(), (rs, rowNum) -> makeFilm(rs), argList.toArray(new Object[0]));
+        List<Film> films = jdbcTemplate.query(sqlBuilder.toString(), (rs, rowNum) -> makeFilm(rs), argList.toArray(new Object[0]));
+        Map<Long, Film> mapFilms = films
+                .stream()
+                .collect(Collectors.toMap(Film::getId, film -> film));
+        setDirectorsFilmByFilmsIds(mapFilms);
+
+        return films;
     }
 
     @Override
