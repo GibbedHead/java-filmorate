@@ -1,29 +1,27 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.model.UserActivityEvent;
+import ru.yandex.practicum.filmorate.storage.UserActivityStorageInterface;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.List;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class UserService {
     @Autowired
-    @Qualifier("UserDbStorage")
     private final UserStorage userStorage;
-    private final FilmStorage filmStorage;
 
-    public UserService(UserStorage userStorage, FilmStorage filmStorage) {
-        this.userStorage = userStorage;
-        this.filmStorage = filmStorage;
-    }
+    @Autowired
+    private final UserActivityStorageInterface userActivityStorage;
+
 
     public User create(User user) throws UserNotFoundException {
         if (user.getName() == null || user.getName().isBlank()) {
@@ -61,12 +59,14 @@ public class UserService {
         User user1 = userStorage.findById(user1Id);
         User user2 = userStorage.findById(user2Id);
         userStorage.createOrConfirmFriendship(user1Id, user2Id);
+        userActivityStorage.save(user1Id, UserActivityEvent.EventType.FRIEND, UserActivityEvent.Operation.ADD, user2Id);
     }
 
     public void deleteFriend(long user1Id, long user2Id) throws UserNotFoundException {
         User user1 = userStorage.findById(user1Id);
         User user2 = userStorage.findById(user2Id);
         userStorage.deleteFriend(user1Id, user2Id);
+        userActivityStorage.save(user1Id, UserActivityEvent.EventType.FRIEND, UserActivityEvent.Operation.REMOVE, user2Id);
         log.info("Дружба {} и {} удалена", user1Id, user2Id);
     }
 
@@ -83,11 +83,4 @@ public class UserService {
         friends1.retainAll(friends2);
         return friends1;
     }
-
-    public List<Film> getFilmRecommendations(Long userId) throws UserNotFoundException {
-        userStorage.findById(userId);
-        return filmStorage.getFilmRecommendations(userId);
-    }
-
-
 }

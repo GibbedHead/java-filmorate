@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@RestControllerAdvice
+@RestControllerAdvice("ru.yandex.practicum.filmorate")
 public class ErrorHandler {
     @ExceptionHandler(value = {UserNotFoundException.class, DirectorNotFoundException.class,
             FilmNotFoundException.class, GenreNotFoundException.class, MpaNotFoundException.class,

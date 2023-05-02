@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -8,30 +9,28 @@ import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.UserActivityEvent;
+
 import ru.yandex.practicum.filmorate.storage.DirectorStorage;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.UserActivityStorageInterface;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.List;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class FilmService {
-    @Autowired
+
     @Qualifier("FilmDbStorage")
     private final FilmStorage filmStorage;
-    @Autowired
     @Qualifier("UserDbStorage")
     private final UserStorage userStorage;
+    @Qualifier("UserActivityDbStorage")
+    private final UserActivityStorageInterface userActivityStorage;
 
-    @Autowired
     private final DirectorStorage directorStorage;
-
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage, DirectorStorage directorStorage) {
-        this.filmStorage = filmStorage;
-        this.userStorage = userStorage;
-        this.directorStorage = directorStorage;
-    }
 
     public Film create(Film film) throws FilmNotFoundException {
         long id = filmStorage.create(film);
@@ -60,6 +59,7 @@ public class FilmService {
         Film film = filmStorage.findById(filmId);
         User user = userStorage.findById(userId);
         filmStorage.addLike(filmId, userId);
+        userActivityStorage.save(userId, UserActivityEvent.EventType.LIKE, UserActivityEvent.Operation.ADD, filmId);
         log.info("Лайк фильма {} пользователем {} добавлен", filmId, userId);
     }
 
@@ -67,6 +67,7 @@ public class FilmService {
         Film film = filmStorage.findById(filmId);
         User user = userStorage.findById(userId);
         filmStorage.deleteLike(filmId, userId);
+        userActivityStorage.save(userId, UserActivityEvent.EventType.LIKE, UserActivityEvent.Operation.REMOVE, filmId);
         log.info("Лайк фильма {} пользователем {} удален", filmId, userId);
     }
 
