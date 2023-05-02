@@ -1,8 +1,8 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -14,19 +14,14 @@ import java.util.List;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class UserService {
     @Autowired
-    @Qualifier("UserDbStorage")
     private final UserStorage userStorage;
 
     @Autowired
-    @Qualifier("UserActivityDbStorage")
     private final UserActivityStorageInterface userActivityStorage;
 
-    public UserService(UserStorage userStorage, UserActivityStorageInterface userActivityStorage) {
-        this.userStorage = userStorage;
-        this.userActivityStorage = userActivityStorage;
-    }
 
     public User create(User user) throws UserNotFoundException {
         if (user.getName() == null || user.getName().isBlank()) {

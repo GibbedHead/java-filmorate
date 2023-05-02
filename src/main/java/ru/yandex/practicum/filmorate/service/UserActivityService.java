@@ -17,7 +17,7 @@ public class UserActivityService {
 
     public List<UserActivityEvent> getUserFeed(long userId) {
         if (!hasEventId(userId)) {
-            log.warn("Failed to update user due to bad ID");
+            log.warn("Не удалось обновить пользователя: Failed to update user due to bad ID");
             throw new UserNotFoundException("No such ID");
         }
         return userActivityStorage.getUserFeed(userId);
