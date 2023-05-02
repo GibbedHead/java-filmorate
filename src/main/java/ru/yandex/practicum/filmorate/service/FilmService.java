@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,6 +29,8 @@ public class FilmService {
     private final UserStorage userStorage;
     @Qualifier("UserActivityDbStorage")
     private final UserActivityStorageInterface userActivityStorage;
+
+    private final DirectorStorage directorStorage;
 
     public Film create(Film film) throws FilmNotFoundException {
         long id = filmStorage.create(film);
