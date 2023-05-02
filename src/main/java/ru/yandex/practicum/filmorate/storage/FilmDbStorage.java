@@ -16,10 +16,6 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -141,7 +137,7 @@ public class FilmDbStorage implements FilmStorage {
         List<Film> films = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs));
         Map<Long, Film> mapFilms = films
                 .stream()
-                .collect(Collectors.toMap(film -> film.getId(), film -> film));
+                .collect(Collectors.toMap(Film::getId, film -> film));
         setDirectorsFilmByFilmsIds(mapFilms);
 
         return films;
