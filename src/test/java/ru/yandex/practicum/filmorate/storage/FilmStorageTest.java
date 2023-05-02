@@ -88,10 +88,9 @@ class FilmStorageTest {
 
     @Test
     void addLike() {
-        filmStorage.addLike(2, 1);
-        filmStorage.addLike(2, 2);
+        filmStorage.addLike(1, 3);
         assertEquals(
-                2,
+                1,
                 filmStorage.getPopular(10, null, null).get(0).getId());
     }
 
@@ -100,7 +99,7 @@ class FilmStorageTest {
         filmStorage.deleteLike(1, 1);
         filmStorage.deleteLike(1, 2);
         assertEquals(
-                2,
+                5,
                 filmStorage.getPopular(10, null, null).get(0).getId());
     }
 
