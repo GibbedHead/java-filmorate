@@ -11,10 +11,14 @@ import org.springframework.test.context.jdbc.Sql;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.GenreNotFoundException;
 import ru.yandex.practicum.filmorate.exception.MpaNotFoundException;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 
+import java.util.List;
 import java.util.Set;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
@@ -27,6 +31,7 @@ class FilmStorageTest {
     private final GenreStorage genreStorage;
     private final MpaStorage mpaStorage;
     private final ObjectMapper objectMapper;
+    private final DirectorStorage directorStorage;
 
     @Test
     void create() throws JsonProcessingException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException {
@@ -105,6 +110,76 @@ class FilmStorageTest {
         filmStorage.addLike(4, 2);
         filmStorage.addLike(3, 1);
         assertEquals(3, filmStorage.getCommon(1, 2).size());
+    }
+
+    @Test
+    void findFilmsByDirectorId_emptyList_directorNoAdded() {
+        List<Film> result = filmStorage.findFilmsByDirectorId(1L);
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void findFilmsByDirectorId_notEmptyList_directorAddedIntoFilmAndFilterParamIsEmpty() throws FilmNotFoundException {
+        Director director = Director.builder().name("Director").build();
+        director = directorStorage.save(director);
+        Film film = filmStorage.findById(1L);
+        film.setDirectors(Set.of(director));
+        filmStorage.update(film);
+
+        List<Film> result = filmStorage.findFilmsByDirectorId(director.getId());
+
+        assertAll(
+                () -> assertThat(result).isNotEmpty(),
+                () -> assertThat(result.get(0).getName()).isEqualTo(film.getName())
+        );
+    }
+
+    @Test
+    void findFilmsByDirectorId_notEmptyList_directorAddedIntoFilmIdAndFilterByYear() throws FilmNotFoundException {
+        Director director = Director.builder().name("Director").build();
+        director = directorStorage.save(director);
+
+        Film film1 = filmStorage.findById(1L);
+        Film film2 = filmStorage.findById(2L);
+
+        film1.setDirectors(Set.of(director));
+        film2.setDirectors(Set.of(director));
+
+        filmStorage.update(film1);
+        filmStorage.update(film2);
+
+        List<Film> result = filmStorage.findFilmsByDirectorId(director.getId(), "year");
+
+        assertAll(
+                () -> assertThat(result).isNotEmpty(),
+                () -> assertThat(result.size()).isGreaterThan(1),
+                () -> assertThat(result.get(0).getName()).isEqualTo(film2.getName()),
+                () -> assertThat(result.get(1).getName()).isEqualTo(film1.getName())
+        );
+    }
+
+    @Test
+    void findFilmsByDirectorId_notEmptyList_directorAddedIntoFilmIdAndFilterByLikes() throws FilmNotFoundException {
+        Director director = Director.builder().name("Director").build();
+        director = directorStorage.save(director);
+
+        Film film1 = filmStorage.findById(1L);
+        Film film2 = filmStorage.findById(2L);
+
+        film1.setDirectors(Set.of(director));
+        film2.setDirectors(Set.of(director));
+
+        filmStorage.update(film1);
+        filmStorage.update(film2);
+
+        List<Film> result = filmStorage.findFilmsByDirectorId(director.getId(), "likes");
+
+        assertAll(
+                () -> assertThat(result).isNotEmpty(),
+                () -> assertThat(result.size()).isGreaterThan(1),
+                () -> assertThat(result.get(0).getName()).isEqualTo(film1.getName()),
+                () -> assertThat(result.get(1).getName()).isEqualTo(film2.getName())
+        );
     }
 
     private Film getFilmFromJson() throws JsonProcessingException {
