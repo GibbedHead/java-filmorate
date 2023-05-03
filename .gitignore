@@ -46,9 +46,3 @@ build/
 *.db
 db/*
 /.mvn/
-
-.DS_Store
-*.DS_Store
-
-.DS_Store
-*.DS_Store
