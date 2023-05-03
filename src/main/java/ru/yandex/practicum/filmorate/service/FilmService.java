@@ -100,7 +100,6 @@ public class FilmService {
     }
 
     public List<Film> searchFilm(String query, String by) {
-
         return filmStorage.search(query, by);
     }
 }

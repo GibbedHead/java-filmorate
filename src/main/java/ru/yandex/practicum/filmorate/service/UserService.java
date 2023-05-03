@@ -3,10 +3,13 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.model.UserActivityEvent;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserActivityStorageInterface;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
@@ -17,7 +20,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
     @Autowired
+    @Qualifier("UserDbStorage")
     private final UserStorage userStorage;
+
+    @Autowired
+    private final FilmStorage filmStorage;
 
     @Autowired
     private final UserActivityStorageInterface userActivityStorage;
@@ -82,5 +89,10 @@ public class UserService {
         List<User> friends2 = getFriends(user2Id);
         friends1.retainAll(friends2);
         return friends1;
+    }
+
+    public List<Film> getFilmRecommendations(Long userId) throws UserNotFoundException {
+        userStorage.findById(userId);
+        return filmStorage.getFilmRecommendations(userId);
     }
 }

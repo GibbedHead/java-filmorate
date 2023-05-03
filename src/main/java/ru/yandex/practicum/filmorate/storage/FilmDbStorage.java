@@ -203,6 +203,10 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public void addLike(long filmId, long userId) {
+        String checkLikeSql = "SELECT COUNT(*) FROM PUBLIC.FILM_LIKES WHERE FILM_ID = ? AND USER_ID = ?";
+        if (jdbcTemplate.queryForObject(checkLikeSql, Integer.class, filmId, userId) > 0) {
+            return;
+        }
         String addLikeSql = "INSERT INTO PUBLIC.FILM_LIKES (FILM_ID, USER_ID) " +
                 "VALUES " +
                 "  (?, ?)";
