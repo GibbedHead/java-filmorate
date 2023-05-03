@@ -80,6 +80,12 @@ class FilmStorageTest {
     }
 
     @Test
+    public void deleteFilmShouldDeleteLikes() {
+        filmStorage.delete(1);
+        assertEquals(5, filmStorage.getPopular(10, null, null).get(0).getId());
+    }
+
+    @Test
     void getPopular() {
         assertEquals(
                 1,
