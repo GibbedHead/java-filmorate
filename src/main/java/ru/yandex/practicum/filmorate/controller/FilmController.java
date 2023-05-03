@@ -96,4 +96,11 @@ public class FilmController {
                                                            @RequestParam(name = "sortBy") Optional<String> param) {
         return filmService.getDirectorsFilms(directorId, param.orElse("noParam"));
     }
+
+    @GetMapping("/search")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Film> getSearchFilm(@RequestParam String query, @RequestParam String by) {
+        log.info("Получен запрос /films/search");
+        return filmService.searchFilm(query, by);
+    }
 }
