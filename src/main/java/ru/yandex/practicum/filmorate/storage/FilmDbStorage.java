@@ -421,7 +421,6 @@ public class FilmDbStorage implements FilmStorage {
                 .stream()
                 .collect(Collectors.toMap(film -> film.getId(), film -> film));
         setDirectorsFilmByFilmsIds(mapFilms);
-
         return films;
     }
 }
