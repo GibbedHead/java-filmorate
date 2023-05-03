@@ -30,6 +30,6 @@ public interface FilmStorage {
 
     List<Film> findFilmsByDirectorId(Long directorId, String param);
 
-    List<Film> search (String query, String by);
+    List<Film> search(String query, String by);
 
 }
