@@ -44,7 +44,7 @@ public class FilmController {
 
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
-    public Film update(@RequestBody Film film) throws FilmNotFoundException {
+    public Film update(@Valid @RequestBody Film film) throws FilmNotFoundException {
         log.info("Запрос обновления фильма: {}", film);
         return filmService.update(film);
     }

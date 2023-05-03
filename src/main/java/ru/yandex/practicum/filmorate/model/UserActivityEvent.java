@@ -17,6 +17,7 @@ public class UserActivityEvent {
     private long entityId;
 
     public UserActivityEvent() {
+
     }
 
     public enum EventType {
