@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/films")
@@ -64,7 +65,7 @@ public class FilmController {
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public void deleteLike(@PathVariable long id, @PathVariable long userId)
             throws FilmNotFoundException, UserNotFoundException {
         log.info("Запрос удаления лайка фильма {} пользователем {}", id, userId);
@@ -74,9 +75,32 @@ public class FilmController {
     @GetMapping("/popular")
     @ResponseStatus(HttpStatus.OK)
     public List<Film> getTopLikedFilms(
-            @RequestParam(name = "count", defaultValue = "10", required = false) Integer count
+            @RequestParam(name = "count", defaultValue = "10", required = false) Integer count,
+            @RequestParam(name = "genreId", required = false) Long genreId,
+            @RequestParam(name = "year", required = false) String year
     ) {
-        log.info("Запрос {} самых популярных фильмов", count);
-        return filmService.getPopularFilms(count);
+        log.info("Запрос {} самых популярных фильмов, id жанра {}, за {} год", count, genreId, year);
+        return filmService.getPopularFilms(count, genreId, year);
+    }
+
+    @GetMapping("/common")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Film> getCommon(@RequestParam(name = "userId") Long userId,
+                                @RequestParam(name = "friendId") Long friendId) {
+        log.info("Запрос общих фильмов пользователей {} и {}", userId, friendId);
+        return filmService.getCommon(userId, friendId);
+    }
+
+    @GetMapping("/director/{directorId}")
+    public List<Film> getFilmsByDirectorSortByLikesAndYear(@PathVariable Long directorId,
+                                                           @RequestParam(name = "sortBy") Optional<String> param) {
+        return filmService.getDirectorsFilms(directorId, param.orElse("noParam"));
+    }
+
+    @GetMapping("/search")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Film> getSearchFilm(@RequestParam String query, @RequestParam String by) {
+        log.info("Получен запрос /films/search");
+        return filmService.searchFilm(query, by);
     }
 }
