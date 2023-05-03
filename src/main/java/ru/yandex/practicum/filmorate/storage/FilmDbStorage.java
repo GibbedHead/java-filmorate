@@ -167,7 +167,7 @@ public class FilmDbStorage implements FilmStorage {
                 "SELECT " +
                 "  f.*, " +
                 "  m.*, " +
-                "  COUNT(fl.USER_ID) as likes_count " +
+                "  COUNT(DISTINCT fl.USER_ID) as likes_count " +
                 "FROM " +
                 "  FILM f " +
                 "  LEFT JOIN FILM_LIKES fl ON f.FILM_ID = fl.FILM_ID " +
@@ -225,7 +225,7 @@ public class FilmDbStorage implements FilmStorage {
                 "SELECT " +
                 "  DISTINCT f.*, " +
                 "  m.*, " +
-                "  COUNT(fl.USER_ID) as likes_count " +
+                "  COUNT(DISTINCT fl.USER_ID) as likes_count " +
                 "FROM " +
                 "  FILM_LIKES fl " +
                 "  LEFT JOIN FILM f ON f.FILM_ID = fl.FILM_ID " +

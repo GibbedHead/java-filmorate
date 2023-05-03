@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class UserStorageTest {
     private final UserStorage userStorage;
     private final ObjectMapper objectMapper;
+    private final FilmStorage filmStorage;
 
     @Test
     public void create() throws UserNotFoundException, JsonProcessingException {
@@ -45,6 +46,19 @@ class UserStorageTest {
         userStorage.delete(1);
         List<User> users = userStorage.findAll();
         assertEquals(2, users.size());
+    }
+
+    @Test
+    public void deleteUserShouldDeleteLikes() {
+        userStorage.delete(1);
+        filmStorage.addLike(5, 3);
+        assertEquals(5, filmStorage.getPopular(10, null, null).get(0).getId());
+    }
+
+    @Test
+    public void deleteUserShouldDeleteFriends() {
+        userStorage.delete(3);
+        assertEquals(List.of(), userStorage.getFriends(2));
     }
 
     @Test
