@@ -33,8 +33,6 @@ public class Film {
     Mpa mpa;
     Set<Director> directors;
 
-    Set<Director> directors;
-
     public Film(long id, String name, String description, LocalDate releaseDate, int duration) {
         this.id = id;
         this.name = name;

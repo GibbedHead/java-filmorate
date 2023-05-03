@@ -260,7 +260,6 @@ public class FilmDbStorage implements FilmStorage {
 
         Mpa mpa = new Mpa(rs.getLong("MPA_ID"), rs.getString("MPA_NAME"));
         film.setMpa(mpa);
-
         film.setGenres(genreStorage.findByFilmId(film.getId()));
 
         return film;
@@ -392,4 +391,37 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
+    @Override
+    public List<Film> search(String query, String by) {
+        StringJoiner stringJoiner = new StringJoiner(" OR LOWER ");
+        String[] stringSplitters = by.split(",");
+        String filter;
+        for (String str : stringSplitters) {
+            if (str.equals("director")) {
+                stringJoiner.add("(dir.name) LIKE LOWER(?) ");
+            } else {
+                stringJoiner.add("(f.name) LIKE LOWER(?) ");
+            }
+        }
+        filter = stringJoiner.toString();
+        String sql = String.format("SELECT f.*, mp.MPA_NAME, dir.director_ID \n" +
+                "FROM FILM f \n" +
+                "LEFT JOIN FILM_LIKES lf ON LF.FILM_ID = f.FILM_ID \n" +
+                "LEFT JOIN DIRECTORS_FILMS df ON f.FILM_ID = df.FILM_ID \n" +
+                "LEFT JOIN Directors dir ON dir.director_ID = df.director_ID \n" +
+                "LEFT JOIN MPA mp ON f.MPA_ID = mp.MPA_ID \n" +
+                "WHERE LOWER %s \n" +
+                "GROUP BY lf.FILM_ID \n" +
+                "ORDER BY COUNT (lf.FILM_ID) DESC ", filter);
+        Object[] params = new Object[stringSplitters.length];
+        Arrays.fill(params, "%" + query + "%");
+
+        List<Film> films = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), params);
+        Map<Long, Film> mapFilms = films
+                .stream()
+                .collect(Collectors.toMap(film -> film.getId(), film -> film));
+        setDirectorsFilmByFilmsIds(mapFilms);
+
+        return films;
+    }
 }
