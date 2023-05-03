@@ -137,7 +137,7 @@ public class FilmDbStorage implements FilmStorage {
         List<Film> films = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs));
         Map<Long, Film> mapFilms = films
                 .stream()
-                .collect(Collectors.toMap(film -> film.getId(), film -> film));
+                .collect(Collectors.toMap(Film::getId, film -> film));
         setDirectorsFilmByFilmsIds(mapFilms);
 
         return films;
@@ -161,8 +161,9 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> getPopular(int count) {
-        String sql = "" +
+    public List<Film> getPopular(Integer count, Long genreId, String year) {
+        List<Object> argList = new ArrayList<>();
+        StringBuilder sqlBuilder = new StringBuilder("" +
                 "SELECT " +
                 "  f.*, " +
                 "  m.*, " +
@@ -171,12 +172,33 @@ public class FilmDbStorage implements FilmStorage {
                 "  FILM f " +
                 "  LEFT JOIN FILM_LIKES fl ON f.FILM_ID = fl.FILM_ID " +
                 "  LEFT JOIN MPA m ON f.MPA_ID = m.MPA_ID " +
+                "  LEFT JOIN FILM_GENRE fg ON f.FILM_ID = fg.FILM_ID " +
+                "  LEFT JOIN GENRE g ON fg.GENRE_ID = g.GENRE_ID " +
+                "WHERE 1 "
+        );
+        if (genreId != null) {
+            sqlBuilder.append("AND fg.GENRE_ID = ? ");
+            argList.add(genreId);
+        }
+        if (year != null) {
+            sqlBuilder.append("AND YEAR(f.RELEASE_DATE) = ? ");
+            argList.add(year);
+        }
+        sqlBuilder.append(
                 "GROUP BY " +
-                "  f.FILM_ID " +
-                "ORDER BY " +
-                "  likes_count DESC " +
-                "LIMIT ?";
-        return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), count);
+                        "  f.FILM_ID " +
+                        "ORDER BY " +
+                        "  likes_count DESC " +
+                        "LIMIT ?"
+        );
+        argList.add(count);
+        List<Film> films = jdbcTemplate.query(sqlBuilder.toString(), (rs, rowNum) -> makeFilm(rs), argList.toArray(new Object[0]));
+        Map<Long, Film> mapFilms = films
+                .stream()
+                .collect(Collectors.toMap(Film::getId, film -> film));
+        setDirectorsFilmByFilmsIds(mapFilms);
+
+        return films;
     }
 
     @Override

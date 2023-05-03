@@ -10,7 +10,6 @@ import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.model.UserActivityEvent;
-
 import ru.yandex.practicum.filmorate.storage.DirectorStorage;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserActivityStorageInterface;
@@ -71,8 +70,8 @@ public class FilmService {
         log.info("Лайк фильма {} пользователем {} удален", filmId, userId);
     }
 
-    public List<Film> getPopularFilms(int count) {
-        return filmStorage.getPopular(count);
+    public List<Film> getPopularFilms(Integer count, Long genreId, String year) {
+        return filmStorage.getPopular(count, genreId, year);
     }
 
     public void delete(long id) throws FilmNotFoundException {
