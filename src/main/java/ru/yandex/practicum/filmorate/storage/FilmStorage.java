@@ -16,9 +16,20 @@ public interface FilmStorage {
 
     Film findById(long id) throws FilmNotFoundException;
 
-    List<Film> getPopular(int count);
+    List<Film> getPopular(Integer count, Long genreId, String year);
 
     void addLike(long filmId, long userId);
 
     void deleteLike(long filmId, long userId);
+
+    List<Film> getCommon(long userId, long friendId);
+
+    List<Film> getFilmRecommendations(long userId);
+
+    List<Film> findFilmsByDirectorId(Long directorId);
+
+    List<Film> findFilmsByDirectorId(Long directorId, String param);
+
+    List<Film> search(String query, String by);
+
 }
